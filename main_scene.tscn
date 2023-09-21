@@ -1,0 +1,29 @@
+[gd_scene load_steps=4 format=3 uid="uid://c014w2qgxwxca"]
+
+[ext_resource type="PackedScene" uid="uid://ccigbadtb8rgw" path="res://floor.res" id="1_7uer3"]
+[ext_resource type="Script" path="res://World.cs" id="1_p2j04"]
+[ext_resource type="PackedScene" uid="uid://i4x353k1mnxo" path="res://player.tscn" id="2_8apjc"]
+
+[node name="MainScene" type="Node3D"]
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.736097, 0.667593, -0.111717, 0, 0.165048, 0.986286, 0.676876, 0.726002, -0.121491, 0, 0, 0)
+
+[node name="World" type="Node" parent="."]
+script = ExtResource("1_p2j04")
+
+[node name="Floor" parent="World" instance=ExtResource("1_7uer3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
+
+[node name="Floor2" parent="World" instance=ExtResource("1_7uer3")]
+
+[node name="Floor3" parent="World" instance=ExtResource("1_7uer3")]
+
+[node name="Player" parent="." instance=ExtResource("2_8apjc")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.71769, 0)
+
+[node name="CameraPivot" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.866025, 0.5, 0, -0.5, 0.866025, 0, 4.11904, 4.60738)
+
+[node name="Camera3D" type="Camera3D" parent="CameraPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.46922, 4.87863)
