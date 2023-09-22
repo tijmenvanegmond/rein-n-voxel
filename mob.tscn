@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://dfcsigntddrht"]
+
+[ext_resource type="Script" path="res://mob.cs" id="1_hbxj1"]
+
+[sub_resource type="TorusMesh" id="TorusMesh_q1oeq"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_uw6ot"]
+radius = 1.0
+
+[node name="Mob" type="CharacterBody3D"]
+script = ExtResource("1_hbxj1")
+
+[node name="Pivot" type="Node3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Pivot"]
+mesh = SubResource("TorusMesh_q1oeq")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_uw6ot")
