@@ -1,14 +1,15 @@
+using System.Diagnostics;
 using Godot;
-using System;
 
 public partial class World : Node
 {
- 	[Export]
+	[Export]
 	public PackedScene ChunkScene { get; set; }
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		spawnChunks(10);
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -16,18 +17,23 @@ public partial class World : Node
 	{
 	}
 
-	private void spawnChunk(int size = 3)
+	private void spawnChunks(int size = 3)
 	{
-		Node3D chunk = ChunkScene.Instantiate<Node3D>();
-		
-		var mobSpawnLocation = GetNode<PathFollow3D>("SpawnPath/SpawnLocation");
-		// And give it a random offset.
-		mobSpawnLocation.ProgressRatio = GD.Randf();
+		var noise = new FastNoiseLite();
+		noise.FractalOctaves = 4;
 
-		Vector3 playerPosition = GetNode<Player>("Player").Position;
-		mob.Initialize(mobSpawnLocation.Position, playerPosition);
-
-		// Spawn the mob by adding it to the Main scene.
-		AddChild(mob);
+		for (int x = 0; x < size; x++)
+		{
+			for (int z = 0; z < size; z++)
+			{
+				float height = noise.GetNoise2D(x,z) * 20f;
+				Vector3 position = new Vector3(x*6,height,z*6);
+				GD.Print($"Spawning Chunk at [{position}] ");
+				Chunk chunk = ChunkScene.Instantiate<Chunk>();
+				chunk.Initialize(position, Vector3.Up );
+				// add to the World scene.
+				AddChild(chunk);
+			}
+		}
 	}
 }
