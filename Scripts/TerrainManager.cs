@@ -6,9 +6,12 @@ public partial class TerrainManager : Node
 	[Export]
 	public PackedScene _chunkScene { get; set; }
 
+	[Export]
+	public int TerrainSizeInChunks = 10;
+
 	public override void _Ready()
 	{
-		spawnChunks(10);
+		spawnChunks(TerrainSizeInChunks);
 	}
 
 	public void spawnChunks(int size = 3)
@@ -31,12 +34,7 @@ public partial class TerrainManager : Node
 	{
 		GD.Print($"Spawning Chunk at {position} ");
 		Chunk newChunk = _chunkScene.Instantiate<Chunk>();
-		GD.Print($"DFEWF");
-		//newChunk.Position = position;
-		GD.Print($"DWADWADW");
 		AddChild(newChunk);
-		newChunk.Initialize(position, Vector3.Up);
-		GD.Print($"GGGGDW");
-		
+		newChunk.Initialize(position);		
 	}
 }

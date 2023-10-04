@@ -13,6 +13,7 @@ transform = Transform3D(-0.736097, 0.667593, -0.111717, 0, 0.165048, 0.986286, 0
 [node name="Terrain" type="Node" parent="."]
 script = ExtResource("1_2mbxs")
 _chunkScene = ExtResource("2_ebcgn")
+TerrainSizeInChunks = 1
 
 [node name="Player" parent="." instance=ExtResource("3_tst67")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.71769, 0)
