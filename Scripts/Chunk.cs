@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Godot;
 
@@ -20,7 +21,7 @@ public partial class Chunk : StaticBody3D
 
         dataArray = GenerateData();
         //load overlay data
-        var tmpMesh = MarchCubes(dataArray);
+        var tmpMesh = GenerateMesh(dataArray);
 
         surfaceMesh.Mesh = tmpMesh;
         // surfaceMesh.CreateTrimeshCollision();
@@ -48,44 +49,9 @@ public partial class Chunk : StaticBody3D
         return dataArray;
     }
 
-    public Mesh MarchCubes(byte[,,] data)
+    public Mesh GenerateMesh(byte[,,] data)
     {
-        var vertices = new List<Vector3>();
-        var uvs = new List<Vector2>();
-        var color = new Color(20, 233, 0);
-
-        vertices.Add(new Vector3(1, 0, 0));
-        vertices.Add(new Vector3(1, 0, 1));
-        vertices.Add(new Vector3(0, 0, 1));
-        vertices.Add(new Vector3(0, 0, 0));
-
-        uvs.Add(new Vector2(0, 0));
-        uvs.Add(new Vector2(0, 1));
-        uvs.Add(new Vector2(1, 1));
-        uvs.Add(new Vector2(1, 0));
-
-        vertices.Add(new Vector3(1, 0, 0));
-        vertices.Add(new Vector3(1, 1, 0));
-        vertices.Add(new Vector3(1, 1, 1));
-        vertices.Add(new Vector3(1, 0, 0));
-
-        uvs.Add(new Vector2(0, 0));
-        uvs.Add(new Vector2(0, 1));
-        uvs.Add(new Vector2(1, 1));
-        uvs.Add(new Vector2(1, 0));
-
-        var st = new SurfaceTool();
-        st.Begin(Mesh.PrimitiveType.TriangleStrip);
-
-        for (int i = 0; i < vertices.Count; i++)
-        {
-            st.SetColor(color);
-            st.SetUV(uvs[i]);
-            st.AddVertex(vertices[i]);
-        }
-
-        st.Index();
-
-        return st.Commit();
+        var mesh = MarchingCubes.CreateMesh(dataArray);
+        return mesh;
     }
 }
