@@ -8,17 +8,17 @@
 [node name="MainScene" type="Node3D"]
 
 [node name="Sun" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.736097, 0.667593, -0.111717, 0, 0.165048, 0.986286, 0.676876, 0.726002, -0.121491, 0, 0, 0)
+transform = Transform3D(-0.636346, 0.553442, -0.537369, -0.472496, 0.271003, 0.838633, 0.609763, 0.787565, 0.0890478, 0, 0, 0)
+light_energy = 3.054
+shadow_enabled = true
 
 [node name="Terrain" type="Node" parent="."]
 script = ExtResource("1_2mbxs")
 _chunkScene = ExtResource("2_ebcgn")
-TerrainSizeInChunks = 1
 
 [node name="Player" parent="." instance=ExtResource("3_tst67")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.71769, 0)
 floor_max_angle = 0.872665
-floor_snap_length = 0.1
 
 [node name="CameraPivot" type="Marker3D" parent="." node_paths=PackedStringArray("player")]
 transform = Transform3D(1, 0, 0, 0, 0.866025, 0.5, 0, -0.5, 0.866025, 0.279516, 0.58468, -0.643109)

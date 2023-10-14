@@ -15,7 +15,8 @@ static public class MarchingCubes
 	static public Mesh CreateMesh(byte[,,] voxels)
 	{
 		List<Vector3> verts = new List<Vector3>();
-		List<int> indices = new List<int>();
+		List<int> indices = new List<int>();		
+		List<Vector3> normals = new List<Vector3>();
 
 		var cube = new byte[8];
 
@@ -28,7 +29,7 @@ static public class MarchingCubes
 					//Get the values in the 8 neighbours which make up a cube
 					FillCube(x, y, z, voxels, cube);
 					//Perform algorithm
-					MarchCube(new Vector3(x, y, z), cube, verts, indices);
+					MarchCube(new Vector3(x, y, z), cube, verts, indices, normals);
 				}
 			}
 		}
@@ -36,9 +37,12 @@ static public class MarchingCubes
 		var surfaceArray = new Godot.Collections.Array();
         surfaceArray.Resize((int)Mesh.ArrayType.Max);
 
+		GD.Print(verts.Count);
+		GD.Print(normals.Count);
+
         surfaceArray[(int)Mesh.ArrayType.Vertex] = verts.ToArray();
         //surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs.ToArray();
-        //surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
+        surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
         surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
 
         var arrMesh = new ArrayMesh();
@@ -62,7 +66,7 @@ static public class MarchingCubes
 	}
 
 	//MarchCube performs the Marching Cubes algorithm on a single cube
-	static void MarchCube(Vector3 pos, byte[] cube, List<Vector3> vertList, List<int> indexList)
+	static void MarchCube(Vector3 pos, byte[] cube, List<Vector3> verts, List<int> indices, List<Vector3> normals)
 	{
 		int i, j, vert, idx;
 		int flagIndex = 0;
@@ -102,14 +106,29 @@ static public class MarchingCubes
 			if (triangleConnectionTable[flagIndex, 3 * i] < 0)
 				break;
 
-			idx = vertList.Count;
+			idx = verts.Count;
 
 			for (j = 0; j < 3; j++)
 			{
-				vert = triangleConnectionTable[flagIndex, 3 * i + j];
-				indexList.Add(idx + windingOrder[j]);
-				vertList.Add(edgeVertex[vert]);
+				vert = triangleConnectionTable[flagIndex, 3 * i + j];				
+				indices.Add(idx + windingOrder[j]);
+				verts.Add(edgeVertex[vert]);
+								
+				
 			}
+
+			//Calc (HARD) Normals
+			var lastVertsAdded = verts.GetRange(verts.Count - 3,3);
+			var A = lastVertsAdded[1] - lastVertsAdded[0];
+			var B = lastVertsAdded[2] - lastVertsAdded[0];
+			var normal =  A.Cross(B);			
+			for (j = 0; j < 3; j++)
+			{
+				normals.Add(normal);	
+			}
+
+
+		
 		}
 	}
 
