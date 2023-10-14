@@ -4,8 +4,8 @@ using Godot;
 
 public partial class Chunk : StaticBody3D
 {
-    const int CHUNK_SIZE = 10;
-    const float CUBE_SIZE = .3f;
+    const int CHUNK_SIZE = 12;
+    const float CUBE_SIZE = 1f;
     [Export]
     MeshInstance3D surfaceMesh;
     byte[,,] dataArray;
@@ -30,7 +30,7 @@ public partial class Chunk : StaticBody3D
         {
             for (int z = 0; z < CHUNK_SIZE; z++)
             {
-                float height = noise.GetNoise2D(x+Position.X, z+Position.Z) * 10f;
+                float height = noise.GetNoise2D(x+(Position.X/CUBE_SIZE), z+(Position.Z/CUBE_SIZE)) * 12f;
                 for (int y = 0; y < CHUNK_SIZE; y++)
                 {
                     dataArray[x, y, z] = (int)height < y ? (byte)1 : (byte)0;

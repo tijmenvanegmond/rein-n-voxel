@@ -1,10 +1,14 @@
-[gd_scene load_steps=4 format=3 uid="uid://i4x353k1mnxo"]
+[gd_scene load_steps=6 format=3 uid="uid://i4x353k1mnxo"]
 
 [ext_resource type="Script" path="res://Scripts/Player.gd" id="1_cdhgd"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_qhcm6"]
 
-[sub_resource type="PrismMesh" id="PrismMesh_s6brl"]
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_ngyr3"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_8bg1n"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_uiipe"]
 
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_cdhgd")
@@ -17,7 +21,15 @@ shape = SubResource("CapsuleShape3D_qhcm6")
 
 [node name="Pivot" type="Node3D" parent="."]
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Pivot"]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
-mesh = SubResource("PrismMesh_s6brl")
+[node name="Body" type="MeshInstance3D" parent="Pivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 1.06581e-14, 0, -1.06581e-14, 1, 0, 0.0251151, 0)
+mesh = SubResource("CapsuleMesh_ngyr3")
 skeleton = NodePath("../..")
+
+[node name="LeftHand" type="MeshInstance3D" parent="Pivot/Body"]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0.5, 0, 0.5)
+mesh = SubResource("SphereMesh_8bg1n")
+
+[node name="RightHand" type="MeshInstance3D" parent="Pivot/Body"]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, -0.509358, 0.00281352, 0.497882)
+mesh = SubResource("SphereMesh_uiipe")

@@ -3,6 +3,8 @@ using Godot;
 
 static public class MarchingCubes
 {
+	//size of Cube
+	const float _scalar = 1f;
 	static public void SetTarget(float tar)
 	{
 		target = tar;
@@ -36,9 +38,6 @@ static public class MarchingCubes
 
 		var surfaceArray = new Godot.Collections.Array();
         surfaceArray.Resize((int)Mesh.ArrayType.Max);
-
-		GD.Print(verts.Count);
-		GD.Print(normals.Count);
 
         surfaceArray[(int)Mesh.ArrayType.Vertex] = verts.ToArray();
         //surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs.ToArray();
@@ -112,7 +111,7 @@ static public class MarchingCubes
 			{
 				vert = triangleConnectionTable[flagIndex, 3 * i + j];				
 				indices.Add(idx + windingOrder[j]);
-				verts.Add(edgeVertex[vert]);
+				verts.Add(edgeVertex[vert]*_scalar);
 								
 				
 			}

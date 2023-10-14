@@ -7,7 +7,7 @@ public partial class TerrainManager : Node
 	public PackedScene _chunkScene { get; set; }
 
 	[Export]
-	public int TerrainSizeInChunks = 10;
+	public int TerrainSizeInChunks = 30;
 
 	public override void _Ready()
 	{
@@ -21,9 +21,8 @@ public partial class TerrainManager : Node
 		for (int x = 0; x < size; x++)
 		{
 			for (int z = 0; z < size; z++)
-			{
-				float height = noise.GetNoise2D(x, z) * 20f;
-				Vector3 position = new Vector3(x * 6, height, z * 6);
+			{				
+				Vector3 position = new Vector3(x * 12, 0, z * 12);
 				spawnChunk(position);
 			}
 		}
