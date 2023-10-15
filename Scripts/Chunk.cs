@@ -23,9 +23,7 @@ public partial class Chunk : StaticBody3D
         GD.Print($"Initializing Chunk at {Position}");
         GenerateData();
         doUpdate = 1;
-
     }
-
 
     public override void _Process(double delta)
     {
@@ -42,9 +40,6 @@ public partial class Chunk : StaticBody3D
         GenerateMesh();
 
         doUpdate = 0;
-
-
-
     }
 
     public void GenerateData()
@@ -64,7 +59,6 @@ public partial class Chunk : StaticBody3D
                 {
                     dataArray[x, y, z] = (int)height < y ? (byte)1 : (byte)0;
                 }
-
             }
         }
 
@@ -82,11 +76,9 @@ public partial class Chunk : StaticBody3D
         if (x < CHUNK_SIZE && x >= 0 && y < CHUNK_SIZE && y >= 0 && z < CHUNK_SIZE && z >= 0)
         {
             return dataArray[x, y, z];
-
         }
 
         //outside array
-
         var voxelCoords = new Vector3I(x, y, z);
 
         byte foundVoxel;
