@@ -5,9 +5,9 @@ public partial class Chunk : StaticBody3D
     public const int CHUNK_SIZE = 12;
     public const int CHUNK_DIVISIONS = 12;
     [Export]
-    bool isGenerated { get; set; }
+    public bool isGenerated { get; private set; }
     [Export]
-    bool isRendered { get; set; }
+    public int doUpdate { get; private set; }
     [Export]
     MeshInstance3D surfaceMesh;
     byte[,,] dataArray;
@@ -21,18 +21,35 @@ public partial class Chunk : StaticBody3D
         terrainManager = _terrainManager;
         Position = ((Vector3)key) * Chunk.CHUNK_SIZE;
         GD.Print($"Initializing Chunk at {Position}");
-        dataArray = GenerateData();
-        GD.Print($"Genned Data at {Position}");
-        //load overlay data
-        var newMesh = GenerateMesh(dataArray);
-        GD.Print($"Genned mesh at {Position}");
-        surfaceMesh.Mesh = newMesh;
-        surfaceMesh.CreateTrimeshCollision();
+        GenerateData();
+        doUpdate = 1;
+
     }
 
-    public byte[,,] GenerateData()
+
+    public override void _Process(double delta)
     {
-        var dataArray = new byte[CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE];
+        if (doUpdate < 1)
+            return;
+        doUpdate++;
+
+        if (doUpdate > 100)
+        {
+            GD.Print($"Mesh[{key}] failed to update for a 100 frames!");
+            doUpdate = 0; // early to prevent infinite loops
+        }
+
+        GenerateMesh();
+
+        doUpdate = 0;
+
+
+
+    }
+
+    public void GenerateData()
+    {
+        dataArray = new byte[CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE];
         var noise = new FastNoiseLite();
 
         var HEIGHT_MULTIPLIER = 12f;
@@ -51,7 +68,7 @@ public partial class Chunk : StaticBody3D
             }
         }
 
-        return dataArray;
+        isGenerated = true;
     }
 
     public byte GetVoxel(Vector3I input)
@@ -69,21 +86,23 @@ public partial class Chunk : StaticBody3D
         }
 
         //outside array
-        Vector3I worldPos = key * CHUNK_SIZE + new Vector3I(x, y, z); //voxelpos in "world" pos
-                                                                      //calculate in which chunkkey the new chunk has
-        Vector3I newKey = new Vector3I(Mathf.FloorToInt(worldPos.X / CHUNK_SIZE),
-                                        Mathf.FloorToInt(worldPos.Y / CHUNK_SIZE),
-                                        Mathf.FloorToInt(worldPos.Z / CHUNK_SIZE));
-        Vector3I newLocalPos = worldPos - (newKey * CHUNK_SIZE); //the new local pos
 
-        var foundChunk = terrainManager.GetChunk(newLocalPos);
-        if (foundChunk == null || !foundChunk.isGenerated)
-            return 1;
+        var voxelCoords = new Vector3I(x, y, z);
 
-        return foundChunk.GetVoxel(newLocalPos);
+        byte foundVoxel;
+        if (terrainManager.GetVoxel(voxelCoords, out foundVoxel))
+        {
+            //success
+        }
+        else
+        {
+            //chunk probably not loaded in (yet)
+        }
+
+        return foundVoxel;
     }
 
-    public Mesh GenerateMesh(byte[,,] data)
+    public Mesh GenerateMesh()
     {
 
         byte[,,] dataPlus1 = new byte[CHUNK_SIZE + 1, CHUNK_SIZE + 1, CHUNK_SIZE + 1];
@@ -101,6 +120,10 @@ public partial class Chunk : StaticBody3D
         }
 
         var mesh = MarchingCubes.CreateMesh(dataPlus1);
+
+        surfaceMesh.Mesh = mesh;
+        surfaceMesh.CreateTrimeshCollision();
+
         return mesh;
     }
 }
