@@ -3,12 +3,17 @@ using Godot;
 
 public partial class World : Node
 {
-	private TerrainManager _terrainManager { get; set; }
+	[Export]
+	public CharacterBody3D playerNode { get; set; }
+	[Export]
+	public TerrainManager _terrainManager { get; set; }
+
+	[Export]
+	public int ChunkLoadRadius = 10;
 
 	public override void _Ready()
 	{
-		_terrainManager = new TerrainManager();
-		_terrainManager.spawnChunks(10);
+		_terrainManager.spawnChunks(playerNode.Position, ChunkLoadRadius);
 	}
 
 	public override void _Process(double delta)

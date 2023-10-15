@@ -1,11 +1,15 @@
-[gd_scene load_steps=5 format=3 uid="uid://c014w2qgxwxca"]
+[gd_scene load_steps=6 format=3 uid="uid://c014w2qgxwxca"]
 
 [ext_resource type="Script" path="res://Scripts/TerrainManager.cs" id="1_2mbxs"]
+[ext_resource type="Script" path="res://Scripts/World.cs" id="1_yu4ep"]
 [ext_resource type="PackedScene" uid="uid://ccigbadtb8rgw" path="res://Scenes/chunk.res" id="2_ebcgn"]
 [ext_resource type="PackedScene" uid="uid://i4x353k1mnxo" path="res://Scenes/player.tscn" id="3_tst67"]
 [ext_resource type="Script" path="res://Scripts/CameraPivot.gd" id="4_yyx7o"]
 
-[node name="MainScene" type="Node3D"]
+[node name="MainScene" type="Node3D" node_paths=PackedStringArray("playerNode", "_terrainManager")]
+script = ExtResource("1_yu4ep")
+playerNode = NodePath("Player")
+_terrainManager = NodePath("Terrain")
 
 [node name="Sun" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.636346, 0.553442, -0.537369, -0.472496, 0.271003, 0.838633, 0.609763, 0.787565, 0.0890478, 0, 0, 0)
@@ -14,7 +18,7 @@ shadow_enabled = true
 
 [node name="Terrain" type="Node" parent="."]
 script = ExtResource("1_2mbxs")
-_chunkScene = ExtResource("2_ebcgn")
+chunkScene = ExtResource("2_ebcgn")
 
 [node name="Player" parent="." instance=ExtResource("3_tst67")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.71769, 0)

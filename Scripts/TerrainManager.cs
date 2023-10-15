@@ -1,39 +1,45 @@
+using System.Collections.Generic;
 using System.Diagnostics;
 using Godot;
 
 public partial class TerrainManager : Node
 {
 	[Export]
-	public PackedScene _chunkScene { get; set; }
+	public PackedScene chunkScene { get; set; }
+	Dictionary<Vector3I, Chunk> chunkDict = new Dictionary<Vector3I, Chunk>();
 
-	[Export]
-	public int TerrainSizeInChunks = 30;
-
-	public override void _Ready()
+	public void spawnChunks(Vector3 origin, int radius = 10)
 	{
-		spawnChunks(TerrainSizeInChunks);
-	}
+		var curentChunkKey = new Vector3I(Mathf.FloorToInt(origin.X / Chunk.CHUNK_SIZE), 0, Mathf.FloorToInt(origin.Z / Chunk.CHUNK_SIZE));
 
-	public void spawnChunks(int size = 3)
-	{
-		var noise = new FastNoiseLite();
-
-		for (int x = 0; x < size; x++)
+		for (int x = -radius; x <= radius; x++)
 		{
-			for (int z = 0; z < size; z++)
-			{				
-				Vector3 position = new Vector3(x * 12, 0, z * 12);
-				spawnChunk(position);
+			for (int z = -radius; z <= radius; z++)
+			{
+				var key = new Vector3I(curentChunkKey.X + x, 0, curentChunkKey.Z + z);
+				createChunk(key);
 			}
 		}
 	}
 
-
-	private void spawnChunk(Vector3 position)
+	public Chunk GetChunk(Vector3I key)
 	{
-		GD.Print($"Spawning Chunk at {position} ");
-		Chunk newChunk = _chunkScene.Instantiate<Chunk>();
+		if (!chunkDict.ContainsKey(key))
+			return null;
+
+		return chunkDict[key];
+	}
+
+
+	private void createChunk(Vector3I key)
+	{
+		if(GetChunk(key) != null)
+			return;
+
+		Chunk newChunk = chunkScene.Instantiate<Chunk>();
+
+		chunkDict.Add(key, newChunk);
 		AddChild(newChunk);
-		newChunk.Initialize(position);		
+		newChunk.Init(key, this);
 	}
 }
