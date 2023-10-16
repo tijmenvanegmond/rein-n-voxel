@@ -2,16 +2,18 @@ using Godot;
 
 public partial class Chunk : StaticBody3D
 {
-    public const int CHUNK_SIZE = 12;
-    public const int CHUNK_DIVISIONS = 12;
+
     [Export]
     public bool isGenerated { get; private set; }
     [Export]
     public int doUpdate { get; private set; }
+    public const int CHUNK_SIZE = 12;
+    public const int CHUNK_DIVISIONS = 12;
+    byte[,,] dataArray;
+    const int dataArrSize = CHUNK_SIZE + 1;
     [Export]
     MeshInstance3D surfaceMesh;
-    byte[,,] dataArray;
-    Chunk[] neighbours;
+    Chunk[] directNeighbours = new Chunk[6];
     TerrainManager terrainManager;
     Vector3I key;
 
@@ -20,7 +22,7 @@ public partial class Chunk : StaticBody3D
         key = _key;
         terrainManager = _terrainManager;
         Position = ((Vector3)key) * Chunk.CHUNK_SIZE;
-        GD.Print($"Initializing Chunk at {Position}");
+        GD.Print($"Initializing Chunk{key} at {Position}");
         GenerateData();
         doUpdate = 1;
     }
@@ -44,18 +46,18 @@ public partial class Chunk : StaticBody3D
 
     public void GenerateData()
     {
-        dataArray = new byte[CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE];
+        dataArray = new byte[dataArrSize, dataArrSize, dataArrSize];
         var noise = new FastNoiseLite();
 
         var HEIGHT_MULTIPLIER = 12f;
         var CUBE_SIZE = (float)(CHUNK_SIZE / CHUNK_DIVISIONS);
 
-        for (int x = 0; x < CHUNK_SIZE; x++)
+        for (int x = 0; x < dataArrSize; x++)
         {
-            for (int z = 0; z < CHUNK_SIZE; z++)
+            for (int z = 0; z < dataArrSize; z++)
             {
                 float height = noise.GetNoise2D((x + Position.X) / CUBE_SIZE, (z + Position.Z) / CUBE_SIZE) * HEIGHT_MULTIPLIER;
-                for (int y = 0; y < CHUNK_SIZE; y++)
+                for (int y = 0; y < dataArrSize; y++)
                 {
                     dataArray[x, y, z] = (int)height < y ? (byte)1 : (byte)0;
                 }
@@ -72,13 +74,14 @@ public partial class Chunk : StaticBody3D
 
     public byte GetLocalVoxel(int x, int y, int z)
     {
-
-        if (x < CHUNK_SIZE && x >= 0 &&
-            y < CHUNK_SIZE && y >= 0 &&
-            z < CHUNK_SIZE && z >= 0)
+        if (x < dataArrSize && x >= 0 &&
+            y < dataArrSize && y >= 0 &&
+            z < dataArrSize && z >= 0)
         {
             return dataArray[x, y, z];
         }
+
+        return 0;
 
         //outside array
 
