@@ -31,14 +31,14 @@ public partial class TerrainManager : Node
 		return chunkDict[key];
 	}
 
-	public bool GetVoxel(Vector3I posKey, out byte VoxelData)
+	public bool GetVoxel(Vector3I posKey, out byte voxelData)
 	{
-		VoxelData = 0;
+		voxelData = 0;
 
 		Vector3I chunkKey = new Vector3I(Mathf.FloorToInt(posKey.X / CHUNK_SIZE),
 										Mathf.FloorToInt(posKey.Y / CHUNK_SIZE),
-										Mathf.FloorToInt(posKey.Z / CHUNK_SIZE));		
-
+										Mathf.FloorToInt(posKey.Z / CHUNK_SIZE));
+		
 		var foundChunk = GetChunk(chunkKey);
 		if (foundChunk == null || !foundChunk.isGenerated)
 			return false;
@@ -47,7 +47,7 @@ public partial class TerrainManager : Node
 								   		posKey.Y % CHUNK_SIZE,
 								   		posKey.Z % CHUNK_SIZE);
 
-		VoxelData = foundChunk.GetVoxel(remains);
+		voxelData = foundChunk.GetLocalVoxel(remains);
 		return true;
 	}
 
