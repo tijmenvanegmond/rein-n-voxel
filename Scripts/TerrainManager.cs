@@ -31,30 +31,25 @@ public partial class TerrainManager : Node
 		return chunkDict[key];
 	}
 
-	public bool GetVoxel(Vector3I posKey, out byte VoxelData)
+	public bool GetVoxel(Vector3I posKey, out byte voxelData)
 	{
-		VoxelData = 0;
+		voxelData = 0;
 
 		Vector3I chunkKey = new Vector3I(Mathf.FloorToInt(posKey.X / CHUNK_SIZE),
 										Mathf.FloorToInt(posKey.Y / CHUNK_SIZE),
 										Mathf.FloorToInt(posKey.Z / CHUNK_SIZE));
 		
-
 		var foundChunk = GetChunk(chunkKey);
-		GD.Print($"requested info from chunk[{chunkKey}] it's there:{foundChunk != null}");
 		if (foundChunk == null || !foundChunk.isGenerated)
 			return false;
-		GD.Print($"it has generated");
 
 		Vector3I remains = new Vector3I(posKey.X % CHUNK_SIZE,
-								   posKey.Y % CHUNK_SIZE,
-								   posKey.Z % CHUNK_SIZE);
+								   		posKey.Y % CHUNK_SIZE,
+								   		posKey.Z % CHUNK_SIZE);
 
-		VoxelData = foundChunk.GetVoxel(remains);
+		voxelData = foundChunk.GetLocalVoxel(remains);
 		return true;
 	}
-
-
 
 	private void CreateChunk(Vector3I key)
 	{

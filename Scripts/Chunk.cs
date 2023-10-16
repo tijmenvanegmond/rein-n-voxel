@@ -71,23 +71,24 @@ public partial class Chunk : StaticBody3D
         isGenerated = true;
     }
 
-    public byte GetVoxel(Vector3I input)
+    public byte GetLocalVoxel(Vector3I input)
     {
-        return GetVoxel(input.X, input.Y, input.Z);
+        return GetLocalVoxel(input.X, input.Y, input.Z);
     }
 
-    public byte GetVoxel(int x, int y, int z)
+    public byte GetLocalVoxel(int x, int y, int z)
     {
 
-        if (x < CHUNK_SIZE && x >= 0 && y < CHUNK_SIZE && y >= 0 && z < CHUNK_SIZE && z >= 0)
+        if (x < CHUNK_SIZE && x >= 0 &&
+            y < CHUNK_SIZE && y >= 0 &&
+            z < CHUNK_SIZE && z >= 0)
         {
             return dataArray[x, y, z];
-
         }
 
         //outside array
 
-        var voxelCoords = new Vector3I(x, y, z);
+        var voxelCoords = new Vector3I(key.X * CHUNK_SIZE + x, key.Y * CHUNK_SIZE + y, key.Z * CHUNK_SIZE + z);
 
         byte foundVoxel;
         if (terrainManager.GetVoxel(voxelCoords, out foundVoxel))
@@ -114,7 +115,7 @@ public partial class Chunk : StaticBody3D
             {
                 for (int z = 0; z < CHUNK_SIZE + 1; z++)
                 {
-                    dataPlus1[x, y, z] = GetVoxel(x, y, z);
+                    dataPlus1[x, y, z] = GetLocalVoxel(x, y, z);
                 }
             }
         }
