@@ -10,6 +10,7 @@
 script = ExtResource("1_yu4ep")
 playerNode = NodePath("Player")
 _terrainManager = NodePath("Terrain")
+ChunkLoadRadius = 3
 
 [node name="Sun" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.636346, 0.553442, -0.537369, -0.472496, 0.271003, 0.838633, 0.609763, 0.787565, 0.0890478, 0, 0, 0)
@@ -21,7 +22,7 @@ script = ExtResource("1_2mbxs")
 chunkScene = ExtResource("2_ebcgn")
 
 [node name="Player" parent="." instance=ExtResource("3_tst67")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.71769, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 16.8399, 0)
 floor_max_angle = 0.872665
 
 [node name="CameraPivot" type="Marker3D" parent="." node_paths=PackedStringArray("player")]

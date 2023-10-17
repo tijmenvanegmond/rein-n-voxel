@@ -9,9 +9,16 @@ public partial class TerrainManager : Node
 	Dictionary<Vector3I, Chunk> chunkDict = new Dictionary<Vector3I, Chunk>();
 	const int CHUNK_SIZE = Chunk.CHUNK_SIZE;
 
+	public FastNoiseLite noise = new FastNoiseLite();
+
+	public override void _Ready()
+	{
+		noise.Seed = (int)Time.GetTicksMsec();
+	}
+
 	public void SpawnChunks(Vector3 origin, int radius = 4, int depth = 3)
 	{
-		var originChunkKey = new Vector3I(Mathf.FloorToInt(origin.X / CHUNK_SIZE), 0, Mathf.FloorToInt(origin.Z / CHUNK_SIZE));
+		var originChunkKey = new Vector3I(Mathf.FloorToInt(origin.X / CHUNK_SIZE), Mathf.FloorToInt(origin.Y / CHUNK_SIZE), Mathf.FloorToInt(origin.Z / CHUNK_SIZE));
 
 		for (int x = -radius; x <= radius; x++)
 		{
@@ -19,7 +26,7 @@ public partial class TerrainManager : Node
 			{
 				for (int y = -depth; y <= depth; y++)
 				{
-					var key = new Vector3I(originChunkKey.X + x, originChunkKey.Y, originChunkKey.Z + z);
+					var key = new Vector3I(originChunkKey.X + x, originChunkKey.Y + y, originChunkKey.Z + z);
 					if (GetChunk(key) == null)
 					{
 						CreateChunk(key);

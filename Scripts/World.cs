@@ -11,11 +11,11 @@ public partial class World : Node
 
 	public override void _Ready()
 	{
-		_terrainManager.SpawnChunks(playerNode.Position, ChunkLoadRadius);
 	}
 
 	public override void _Process(double delta)
 	{
+		_terrainManager.SpawnChunks(playerNode.Position, ChunkLoadRadius);
 
 	}
 }

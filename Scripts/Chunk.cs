@@ -2,7 +2,6 @@ using Godot;
 
 public partial class Chunk : StaticBody3D
 {
-
     [Export]
     public bool isGenerated { get; private set; }
     [Export]
@@ -46,8 +45,8 @@ public partial class Chunk : StaticBody3D
 
     public void GenerateData()
     {
+        //dataArrSize is just so i over gen at the edges (and do quick checks on it)
         dataArray = new byte[dataArrSize, dataArrSize, dataArrSize];
-        var noise = new FastNoiseLite();
 
         var HEIGHT_MULTIPLIER = 12f;
         var CUBE_SIZE = (float)(CHUNK_SIZE / CHUNK_DIVISIONS);
@@ -56,10 +55,10 @@ public partial class Chunk : StaticBody3D
         {
             for (int z = 0; z < dataArrSize; z++)
             {
-                float height = noise.GetNoise2D((x + Position.X) / CUBE_SIZE, (z + Position.Z) / CUBE_SIZE) * HEIGHT_MULTIPLIER;
+                float height = terrainManager.noise.GetNoise2D((x + Position.X) / CUBE_SIZE, (z + Position.Z) / CUBE_SIZE) * HEIGHT_MULTIPLIER;
                 for (int y = 0; y < dataArrSize; y++)
                 {
-                    dataArray[x, y, z] = (int)height < y ? (byte)1 : (byte)0;
+                    dataArray[x, y, z] = (int)height < Position.Y + y ? (byte)1 : (byte)0;
                 }
             }
         }
