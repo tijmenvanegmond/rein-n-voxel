@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://Scripts/World.cs" id="1_yu4ep"]
 [ext_resource type="PackedScene" uid="uid://ccigbadtb8rgw" path="res://Scenes/chunk.res" id="2_ebcgn"]
 [ext_resource type="PackedScene" uid="uid://i4x353k1mnxo" path="res://Scenes/player.tscn" id="3_tst67"]
-[ext_resource type="Script" path="res://Scripts/CameraPivot.gd" id="4_yyx7o"]
+[ext_resource type="Script" path="res://Scripts/Player/CameraController.cs" id="5_l7xjp"]
 
 [node name="MainScene" type="Node3D" node_paths=PackedStringArray("playerNode", "_terrainManager")]
 script = ExtResource("1_yu4ep")
@@ -25,10 +25,11 @@ chunkScene = ExtResource("2_ebcgn")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 16.8399, 0)
 floor_max_angle = 0.872665
 
-[node name="CameraPivot" type="Marker3D" parent="." node_paths=PackedStringArray("player")]
+[node name="CameraController" type="Marker3D" parent="." node_paths=PackedStringArray("playerNode")]
 transform = Transform3D(1, 0, 0, 0, 0.866025, 0.5, 0, -0.5, 0.866025, 0.279516, 0.58468, -0.643109)
-script = ExtResource("4_yyx7o")
-player = NodePath("../Player")
+script = ExtResource("5_l7xjp")
+playerNode = NodePath("../Player")
+MOVEMENT_SPEED = 1.0
 
-[node name="Camera3D" type="Camera3D" parent="CameraPivot"]
+[node name="Camera3D" type="Camera3D" parent="CameraController"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.53674e-07, 2.01366, 10.558)

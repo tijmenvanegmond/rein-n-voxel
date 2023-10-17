@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://i4x353k1mnxo"]
 
-[ext_resource type="Script" path="res://Scripts/Player.gd" id="1_cdhgd"]
+[ext_resource type="Script" path="res://Scripts/Player/MovementController.cs" id="1_473ky"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_qhcm6"]
 
@@ -10,11 +10,10 @@
 
 [sub_resource type="SphereMesh" id="SphereMesh_uiipe"]
 
-[node name="Player" type="CharacterBody3D"]
-script = ExtResource("1_cdhgd")
-speed = 6
-fall_acceleration = 40
-jump_power = 16
+[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("Pivot")]
+floor_snap_length = 0.01
+script = ExtResource("1_473ky")
+Pivot = NodePath("Pivot")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape3D_qhcm6")
