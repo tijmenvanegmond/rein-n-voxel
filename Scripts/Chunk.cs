@@ -5,7 +5,7 @@ public partial class Chunk : StaticBody3D
     [Export]
     public bool isGenerated { get; private set; }
     [Export]
-    public int doUpdate { get; private set; }
+    public int doUpdateInt { get; private set; }
     public const int CHUNK_SIZE = 12;
     public const int CHUNK_DIVISIONS = 12;
     byte[,,] dataArray;
@@ -23,24 +23,24 @@ public partial class Chunk : StaticBody3D
         Position = ((Vector3)key) * Chunk.CHUNK_SIZE;
         GD.Print($"Initializing Chunk{key} at {Position}");
         GenerateData();
-        doUpdate = 1;
+        doUpdateInt = 1;
     }
 
     public override void _Process(double delta)
     {
-        if (doUpdate < 1)
+        if (doUpdateInt < 1)
             return;
-        doUpdate++;
+        doUpdateInt++;
 
-        if (doUpdate > 100)
+        if (doUpdateInt > 100)
         {
             GD.Print($"Mesh[{key}] failed to update for a 100 frames!");
-            doUpdate = 0; // early to prevent infinite loops
+            doUpdateInt = 0; // early to prevent infinite loops
         }
 
         GenerateMesh();
 
-        doUpdate = 0;
+        doUpdateInt = 0;
     }
 
     public void GenerateData()
@@ -48,17 +48,25 @@ public partial class Chunk : StaticBody3D
         //dataArrSize is just so i over gen at the edges (and do quick checks on it)
         dataArray = new byte[dataArrSize, dataArrSize, dataArrSize];
 
-        var HEIGHT_MULTIPLIER = 12f;
+        var HEIGHT_MULTIPLIER = 25f;
+        var SCALE_MULTIPLIER = 3.2f;
+        var ROCK_SCALE_MULTIPLIER = 1.3f;
         var CUBE_SIZE = (float)(CHUNK_SIZE / CHUNK_DIVISIONS);
 
         for (int x = 0; x < dataArrSize; x++)
         {
             for (int z = 0; z < dataArrSize; z++)
             {
-                float height = terrainManager.noise.GetNoise2D((x + Position.X) / CUBE_SIZE, (z + Position.Z) / CUBE_SIZE) * HEIGHT_MULTIPLIER;
+                float height = terrainManager.noise.GetNoise2D((x + Position.X) / CUBE_SIZE / SCALE_MULTIPLIER,
+                                                                (z + Position.Z) / CUBE_SIZE / SCALE_MULTIPLIER) * HEIGHT_MULTIPLIER;
                 for (int y = 0; y < dataArrSize; y++)
                 {
-                    dataArray[x, y, z] = (int)height < Position.Y + y ? (byte)1 : (byte)0;
+
+                    float some3dnoise = terrainManager.noise.GetNoise3D((x + Position.X) / CUBE_SIZE / ROCK_SCALE_MULTIPLIER,
+                                                                        (y + Position.Y) / CUBE_SIZE / ROCK_SCALE_MULTIPLIER,
+                                                                        (z + Position.Z) / CUBE_SIZE / ROCK_SCALE_MULTIPLIER) * 50f;
+                    float actualDensity = height - (Position.Y + y) + some3dnoise;
+                    dataArray[x, y, z] = actualDensity < 1 ? (byte)1 : (byte)0;
                 }
             }
         }
