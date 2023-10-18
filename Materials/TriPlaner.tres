@@ -1,7 +1,12 @@
-[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://bj106mgox7g71"]
+[gd_resource type="ShaderMaterial" load_steps=4 format=3 uid="uid://bj106mgox7g71"]
 
 [ext_resource type="Shader" path="res://Shaders/Triplaner.gdshader" id="1_d4ose"]
+[ext_resource type="Texture2D" uid="uid://bq4n6chn64qaj" path="res://Textures/grass.png" id="2_0cytx"]
+[ext_resource type="Texture2D" uid="uid://flr66gomal5d" path="res://Textures/dirt.png" id="2_fj5c5"]
 
 [resource]
 render_priority = 0
 shader = ExtResource("1_d4ose")
+shader_parameter/brightness = 1.0
+shader_parameter/grass_texture = ExtResource("2_0cytx")
+shader_parameter/dirt_texture = ExtResource("2_fj5c5")
