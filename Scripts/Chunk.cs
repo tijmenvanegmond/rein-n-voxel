@@ -15,13 +15,13 @@ public partial class Chunk : StaticBody3D
     Chunk[] directNeighbours = new Chunk[6];
     TerrainManager terrainManager;
     Vector3I key;
+    int numOfSolid = 0;
 
     public void Init(Vector3I _key, TerrainManager _terrainManager)
     {
         key = _key;
         terrainManager = _terrainManager;
         Position = ((Vector3)key) * Chunk.CHUNK_SIZE;
-        GD.Print($"Initializing Chunk{key} at {Position}");
         GenerateData();
         doUpdateInt = 1;
     }
@@ -50,8 +50,8 @@ public partial class Chunk : StaticBody3D
 
         var HEIGHT_MULTIPLIER = 25f;
         var SCALE_MULTIPLIER = 3.2f;
-        var ROCK_SCALE_MULTIPLIER = 1.3f;
-        var CUBE_SIZE = (float)(CHUNK_SIZE / CHUNK_DIVISIONS);
+        var ROCK_SCALE_MULTIPLIER = 1.0f;
+        var CUBE_SIZE = (float)(CHUNK_SIZE / CHUNK_DIVISIONS);       
 
         for (int x = 0; x < dataArrSize; x++)
         {
@@ -64,9 +64,12 @@ public partial class Chunk : StaticBody3D
 
                     float some3dnoise = terrainManager.noise.GetNoise3D((x + Position.X) / CUBE_SIZE / ROCK_SCALE_MULTIPLIER,
                                                                         (y + Position.Y) / CUBE_SIZE / ROCK_SCALE_MULTIPLIER,
-                                                                        (z + Position.Z) / CUBE_SIZE / ROCK_SCALE_MULTIPLIER) * 50f;
+                                                                        (z + Position.Z) / CUBE_SIZE / ROCK_SCALE_MULTIPLIER) * 40f;
                     float actualDensity = height - (Position.Y + y) + some3dnoise;
-                    dataArray[x, y, z] = actualDensity < 1 ? (byte)1 : (byte)0;
+                    var byteValue = actualDensity < 1 ? (byte)1 : (byte)0;
+                    dataArray[x, y, z] = byteValue;
+                    
+                    numOfSolid += byteValue;
                 }
             }
         }
@@ -89,26 +92,16 @@ public partial class Chunk : StaticBody3D
         }
 
         return 0;
-
-        //outside array
-
-        var voxelCoords = new Vector3I(key.X * CHUNK_SIZE + x, key.Y * CHUNK_SIZE + y, key.Z * CHUNK_SIZE + z);
-
-        byte foundVoxel;
-        if (terrainManager.GetVoxel(voxelCoords, out foundVoxel))
-        {
-            //success
-        }
-        else
-        {
-            //chunk probably not loaded in (yet)
-        }
-
-        return foundVoxel;
     }
 
     public Mesh GenerateMesh()
     {
+        if(numOfSolid == 0 || numOfSolid == dataArrSize*dataArrSize*dataArrSize)
+        {
+            //Mesh all air or all solid
+            surfaceMesh.Mesh = null;
+            return null;
+        }
 
         byte[,,] dataPlus1 = new byte[CHUNK_SIZE + 1, CHUNK_SIZE + 1, CHUNK_SIZE + 1];
 
