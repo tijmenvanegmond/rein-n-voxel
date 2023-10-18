@@ -11,6 +11,10 @@
 [sub_resource type="SphereMesh" id="SphereMesh_uiipe"]
 
 [node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("Pivot")]
+slide_on_ceiling = false
+wall_min_slide_angle = 0.87441
+floor_stop_on_slope = false
+floor_max_angle = 0.897099
 floor_snap_length = 0.01
 script = ExtResource("1_473ky")
 Pivot = NodePath("Pivot")
