@@ -21,15 +21,20 @@ shadow_enabled = true
 script = ExtResource("1_2mbxs")
 chunkScene = ExtResource("2_ebcgn")
 
-[node name="Player" parent="." instance=ExtResource("3_tst67")]
+[node name="Player" parent="." node_paths=PackedStringArray("cameraPivot") instance=ExtResource("3_tst67")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 16.8399, 0)
 floor_max_angle = 0.872665
+cameraPivot = NodePath("../CameraPivot")
 
-[node name="CameraController" type="Marker3D" parent="." node_paths=PackedStringArray("playerNode")]
-transform = Transform3D(1, 0, 0, 0, 0.866025, 0.5, 0, -0.5, 0.866025, 0.279516, 0.58468, -0.643109)
+[node name="CameraPivot" type="Marker3D" parent="." node_paths=PackedStringArray("camera3D", "cameraTarget", "playerNode")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.330371, 16.061, -0.643109)
 script = ExtResource("5_l7xjp")
+camera3D = NodePath("../MainCamera")
+cameraTarget = NodePath("CameraPositionTarget")
 playerNode = NodePath("../Player")
-MOVEMENT_SPEED = 1.0
 
-[node name="Camera3D" type="Camera3D" parent="CameraController"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.53674e-07, 2.01366, 10.558)
+[node name="CameraPositionTarget" type="Marker3D" parent="CameraPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 7)
+
+[node name="MainCamera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.624098, 0.781346, 0, -0.781346, 0.624098, 0.279517, 7.60756, 7.49355)

@@ -4,13 +4,14 @@ using System;
 public partial class MovementController : CharacterBody3D
 {
 	[Export]
+	public Node3D cameraPivot;
+	[Export]
 	public Node3D Pivot;
 	[Export]
 	public const float Speed = 5.0f;
 	[Export]
 	public const float JumpVelocity = 7f;
 	public Vector3 MovementDirection { get; protected set; }
-
 	public MovementAction Action_Down = new Blink();
 
 	// Get the gravity from the project settings to be synced with RigidBody nodes.
@@ -32,7 +33,9 @@ public partial class MovementController : CharacterBody3D
 		// As good practice, you should replace UI actions with custom gameplay actions.
 		Vector2 inputDir = Input.GetVector("move_left", "move_right", "move_forward", "move_back");
 
-		MovementDirection = (Transform.Basis * new Vector3(inputDir.X, 0, inputDir.Y)).Normalized();
+		var forward = cameraPivot.GlobalTransform.Basis;
+
+		MovementDirection = (forward * new Vector3(inputDir.X, 0, inputDir.Y)).Normalized();
 
 		if (MovementDirection != Vector3.Zero)
 		{
