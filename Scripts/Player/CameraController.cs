@@ -10,7 +10,7 @@ public partial class CameraController : Node3D
     public CharacterBody3D playerNode { get; set; }
     [Export]
     public float MOVEMENT_SPEED { get; set; } = 5f;
-
+    
     public override void _Ready()
     {
     }
