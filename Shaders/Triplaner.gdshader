@@ -1,5 +1,5 @@
 shader_type spatial;
-render_mode wireframe;
+render_mode vertex_lighting;
 
 const float color_mult = 1.0f;
 uniform float brightness: hint_range(0.0f, 1.0f) = 1.0f;
@@ -22,6 +22,4 @@ void fragment() {
 	///random(floor(projected_coords.xyz));
 	
 	ALBEDO = mix(vec3(0.0f), mix((albedoX * normal_weights.x + albedoY * normal_weights.y + albedoZ * normal_weights.z), color_offset.rgb, 0.05f), brightness);
-
-
 }

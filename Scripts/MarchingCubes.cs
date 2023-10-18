@@ -116,7 +116,6 @@ static public class MarchingCubes
 				
 			}
 
-			//Calc (HARD) Normals
 			var lastVertsAdded = verts.GetRange(verts.Count - 3,3);
 			var A = lastVertsAdded[1] - lastVertsAdded[0];
 			var B = lastVertsAdded[2] - lastVertsAdded[0];

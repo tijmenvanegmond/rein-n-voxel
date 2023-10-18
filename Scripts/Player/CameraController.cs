@@ -20,12 +20,12 @@ public partial class CameraController : Node3D
         var rotation_delta = 0f;
         if (Input.IsActionJustPressed("rotate_right"))
         {
-            rotation_delta += 45f;
+            rotation_delta -= 45f;
         }
         if (Input.IsActionJustPressed("rotate_left"))
         {
 
-            rotation_delta -= 45f;
+            rotation_delta += 45f;
         }
 
         RotateY(Mathf.DegToRad(rotation_delta));
@@ -40,7 +40,7 @@ public partial class CameraController : Node3D
             zoom_delta -= 1f;
         }
 
-        cameraTarget.Translate(new Vector3(0, 1f, 1.5f) * zoom_delta);
+        cameraTarget.Translate(new Vector3(0, .5f, .5f) * zoom_delta);
 
 
 

@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://c014w2qgxwxca"]
+[gd_scene load_steps=7 format=3 uid="uid://b8n15q7e7bwwf"]
 
 [ext_resource type="Script" path="res://Scripts/TerrainManager.cs" id="1_2mbxs"]
 [ext_resource type="Script" path="res://Scripts/World.cs" id="1_yu4ep"]
+[ext_resource type="Script" path="res://Scripts/TerrainEdit.cs" id="2_b3wsc"]
 [ext_resource type="PackedScene" uid="uid://ccigbadtb8rgw" path="res://Scenes/chunk.res" id="2_ebcgn"]
 [ext_resource type="PackedScene" uid="uid://i4x353k1mnxo" path="res://Scenes/player.tscn" id="3_tst67"]
 [ext_resource type="Script" path="res://Scripts/Player/CameraController.cs" id="5_l7xjp"]
@@ -10,21 +11,25 @@
 script = ExtResource("1_yu4ep")
 playerNode = NodePath("Player")
 _terrainManager = NodePath("Terrain")
-ChunkLoadRadius = 3
+
+[node name="Node3D" type="Node3D" parent="." node_paths=PackedStringArray("camera3D")]
+transform = Transform3D(1, 0, 0, 0, 0.624098, 0.781346, 0, -0.781346, 0.624098, 0.279517, 7.60756, 7.49355)
+script = ExtResource("2_b3wsc")
+camera3D = NodePath("../MainCamera")
 
 [node name="Sun" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.636346, 0.553442, -0.537369, -0.472496, 0.271003, 0.838633, 0.609763, 0.787565, 0.0890478, 0, 0, 0)
 light_energy = 3.054
 shadow_enabled = true
 
-[node name="Terrain" type="Node" parent="."]
-script = ExtResource("1_2mbxs")
-chunkScene = ExtResource("2_ebcgn")
-
 [node name="Player" parent="." node_paths=PackedStringArray("cameraPivot") instance=ExtResource("3_tst67")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 16.8399, 0)
 floor_max_angle = 0.872665
 cameraPivot = NodePath("../CameraPivot")
+
+[node name="Terrain" type="Node" parent="."]
+script = ExtResource("1_2mbxs")
+chunkScene = ExtResource("2_ebcgn")
 
 [node name="CameraPivot" type="Marker3D" parent="." node_paths=PackedStringArray("camera3D", "cameraTarget", "playerNode")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.330371, 16.061, -0.643109)
@@ -34,7 +39,7 @@ cameraTarget = NodePath("CameraPositionTarget")
 playerNode = NodePath("../Player")
 
 [node name="CameraPositionTarget" type="Marker3D" parent="CameraPivot"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 7)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 6)
 
 [node name="MainCamera" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.624098, 0.781346, 0, -0.781346, 0.624098, 0.279517, 7.60756, 7.49355)

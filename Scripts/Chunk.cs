@@ -30,6 +30,7 @@ public partial class Chunk : StaticBody3D
     {
         if (doUpdateInt < 1)
             return;
+
         doUpdateInt++;
 
         if (doUpdateInt > 100)
@@ -75,6 +76,23 @@ public partial class Chunk : StaticBody3D
         }
 
         isGenerated = true;
+    }
+
+    public bool SetLocalVoxel(Vector3I loc, byte byteValue){
+        if (loc.X < dataArrSize && loc.X >= 0 &&
+            loc.Y < dataArrSize && loc.Y >= 0 &&
+            loc.Z < dataArrSize && loc.Z >= 0)
+        {
+            dataArray[loc.X, loc.Y, loc.Z] = byteValue;
+
+            if(doUpdateInt < 1)
+            {
+                doUpdateInt = 1;
+            }
+            
+            return true;
+        }
+        return false;
     }
 
     public byte GetLocalVoxel(Vector3I input)
