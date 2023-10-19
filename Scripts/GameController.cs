@@ -12,18 +12,19 @@ public partial class GameController : Node
 	[Export]
 	public int ChunkLoadDepth = 4;
 
+	public PlayerController Player;
+
 	public override void _Ready()
 	{
-		terrainManager.SpawnChunks(Vector3.Zero, ChunkLoadRadius,ChunkLoadDepth);
+		terrainManager.SpawnChunks(Vector3.Zero, ChunkLoadRadius, ChunkLoadDepth);
 
-		var newPlayer = playerScene.Instantiate<PlayerController>();
-		AddChild(newPlayer);
-		newPlayer.playerCamera = GetNode<Camera3D>("MainCamera");
+		Player = playerScene.Instantiate<PlayerController>();
+		AddChild(Player);
+		Player.playerCamera = GetNode<Camera3D>("MainCamera");
 	}
 
 	public override void _Process(double delta)
 	{
-		// terrainManager.SpawnChunks(playerNode.Position, ChunkLoadRadius);
-
+		terrainManager.SpawnChunks(Player.movementController.Position, ChunkLoadRadius);
 	}
 }

@@ -1,6 +1,6 @@
 [gd_scene load_steps=9 format=3 uid="uid://i4x353k1mnxo"]
 
-[ext_resource type="Material" uid="uid://bg77cos2ugvtw" path="res://Materials/PlayerORM.tres" id="1_7l606"]
+[ext_resource type="Material" path="res://Materials/PlayerORM.tres" id="1_7l606"]
 [ext_resource type="Script" path="res://Scripts/Player/MovementController.cs" id="1_473ky"]
 [ext_resource type="Script" path="res://Scripts/Player/PlayerController.cs" id="1_ivvdk"]
 [ext_resource type="Script" path="res://Scripts/Player/CameraController.cs" id="4_tkquy"]
@@ -17,10 +17,13 @@ size = Vector3(0.05, 0.1, 0.2)
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_m3t4p"]
 height = 1.5
 
-[node name="Player" type="Node3D"]
+[node name="Player" type="Node3D" node_paths=PackedStringArray("movementController")]
 script = ExtResource("1_ivvdk")
+movementController = NodePath("CharacterBody3D")
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="." node_paths=PackedStringArray("cameraPivot", "Pivot")]
+floor_max_angle = 0.959931
+floor_snap_length = 0.05
 script = ExtResource("1_473ky")
 cameraPivot = NodePath("../CameraPivot")
 Pivot = NodePath("BodyPivot")
