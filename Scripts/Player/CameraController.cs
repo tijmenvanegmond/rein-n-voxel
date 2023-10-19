@@ -10,6 +10,8 @@ public partial class CameraController : Node3D
     public CharacterBody3D playerNode { get; set; }
     [Export]
     public float MOVEMENT_SPEED { get; set; } = 5f;
+
+    private Vector2 oldMousePosition;
     
     public override void _Ready()
     {
@@ -30,6 +32,19 @@ public partial class CameraController : Node3D
 
         RotateY(Mathf.DegToRad(rotation_delta));
 
+        var tilt_delta = 0f;
+        if (Input.IsActionPressed("tilt_camera"))
+        {
+            var mouseDelta = GetViewport().GetMousePosition() - oldMousePosition;
+            if(mouseDelta.Y > 0)
+                tilt_delta = 1f;
+            else if(mouseDelta.Y < 0)
+                tilt_delta = -1f;
+        }
+        oldMousePosition = GetViewport().GetMousePosition();
+        cameraTarget.Translate(new Vector3(0,.5f,0) * tilt_delta);
+
+
         var zoom_delta = 0f;
         if (Input.IsActionJustPressed("zoom_out"))
         {
@@ -40,11 +55,12 @@ public partial class CameraController : Node3D
             zoom_delta -= 1f;
         }
 
-        cameraTarget.Translate(new Vector3(0, .5f, .5f) * zoom_delta);
+        cameraTarget.Translate(cameraTarget.Position.Normalized() * zoom_delta);
 
 
-
+        //move on top of player
         Position = Position.Lerp(playerNode.Position, MOVEMENT_SPEED * (float)delta);
+        //move camera to cameraTarget
         camera3D.GlobalPosition = camera3D.GlobalPosition.Lerp(cameraTarget.GlobalPosition, MOVEMENT_SPEED * (float)delta);
         camera3D.LookAt(playerNode.GlobalPosition);
 
