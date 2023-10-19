@@ -1,38 +1,55 @@
-[gd_scene load_steps=6 format=3 uid="uid://i4x353k1mnxo"]
+[gd_scene load_steps=9 format=3 uid="uid://i4x353k1mnxo"]
 
+[ext_resource type="Material" uid="uid://bg77cos2ugvtw" path="res://Materials/PlayerORM.tres" id="1_7l606"]
 [ext_resource type="Script" path="res://Scripts/Player/MovementController.cs" id="1_473ky"]
+[ext_resource type="Script" path="res://Scripts/Player/PlayerController.cs" id="1_ivvdk"]
+[ext_resource type="PackedScene" uid="uid://c3mloheginu26" path="res://Scenes/camera_pivot.tscn" id="2_01fol"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_qhcm6"]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_5e3ge"]
 
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_ngyr3"]
+[sub_resource type="SphereMesh" id="SphereMesh_x2od4"]
+radius = 0.4
+height = 0.8
 
-[sub_resource type="SphereMesh" id="SphereMesh_8bg1n"]
+[sub_resource type="BoxMesh" id="BoxMesh_re2g3"]
+size = Vector3(0.05, 0.1, 0.2)
 
-[sub_resource type="SphereMesh" id="SphereMesh_uiipe"]
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_m3t4p"]
+height = 1.5
 
-[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("Pivot")]
-slide_on_ceiling = false
-wall_min_slide_angle = 0.87441
-floor_stop_on_slope = false
-floor_max_angle = 0.897099
-floor_snap_length = 0.01
+[node name="Player" type="Node3D"]
+script = ExtResource("1_ivvdk")
+
+[node name="CameraPivot" parent="." node_paths=PackedStringArray("playerNode") instance=ExtResource("2_01fol")]
+playerNode = NodePath("../CharacterBody3D")
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="." node_paths=PackedStringArray("cameraPivot", "Pivot")]
 script = ExtResource("1_473ky")
-Pivot = NodePath("Pivot")
+cameraPivot = NodePath("../CameraPivot")
+Pivot = NodePath("BodyPivot")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-shape = SubResource("CapsuleShape3D_qhcm6")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_5e3ge")
 
-[node name="Pivot" type="Node3D" parent="."]
+[node name="BodyPivot" type="Node3D" parent="CharacterBody3D"]
 
-[node name="Body" type="MeshInstance3D" parent="Pivot"]
-transform = Transform3D(1, 0, 0, 0, 1, 1.06581e-14, 0, -1.06581e-14, 1, 0, 0.0251151, 0)
-mesh = SubResource("CapsuleMesh_ngyr3")
-skeleton = NodePath("../..")
+[node name="Head" type="MeshInstance3D" parent="CharacterBody3D/BodyPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+material_override = ExtResource("1_7l606")
+mesh = SubResource("SphereMesh_x2od4")
+skeleton = NodePath("../Body")
 
-[node name="LeftHand" type="MeshInstance3D" parent="Pivot/Body"]
-transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0.5, 0, 0.5)
-mesh = SubResource("SphereMesh_8bg1n")
+[node name="OmniLight3D" type="OmniLight3D" parent="CharacterBody3D/BodyPivot/Head"]
+light_color = Color(0.984375, 0.992188, 0, 1)
+light_energy = 6.828
 
-[node name="RightHand" type="MeshInstance3D" parent="Pivot/Body"]
-transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, -0.509358, 0.00281352, 0.497882)
-mesh = SubResource("SphereMesh_uiipe")
+[node name="Hand" type="MeshInstance3D" parent="CharacterBody3D/BodyPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 1.1, 0.4)
+material_override = ExtResource("1_7l606")
+mesh = SubResource("BoxMesh_re2g3")
+skeleton = NodePath("../Body")
+
+[node name="Body" type="MeshInstance3D" parent="CharacterBody3D/BodyPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
+mesh = SubResource("CapsuleMesh_m3t4p")

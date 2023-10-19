@@ -71,6 +71,7 @@ public partial class TerrainManager : Node
 
 		Chunk newChunk = chunkScene.Instantiate<Chunk>();
 		AddChild(newChunk);
+		newChunk.Name = $"Chunk{key}";
 
 		chunkDict.Add(key, newChunk);
 		newChunk.Init(key, this);

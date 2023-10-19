@@ -1,0 +1,9 @@
+[gd_resource type="ORMMaterial3D" format=3 uid="uid://bg77cos2ugvtw"]
+
+[resource]
+albedo_color = Color(1, 1, 0, 1)
+emission_enabled = true
+emission = Color(0.988235, 0.996078, 0, 1)
+rim_enabled = true
+rim_tint = 0.46
+backlight_enabled = true

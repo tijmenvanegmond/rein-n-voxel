@@ -1,0 +1,45 @@
+[gd_scene load_steps=6 format=3 uid="uid://cmgvroxtgtete"]
+
+[ext_resource type="PackedScene" uid="uid://i4x353k1mnxo" path="res://Scenes/player.tscn" id="1_a1oo7"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_xlwel"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_eifjh"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_i0ax8"]
+size = Vector3(20, 0, 20)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_8uen4"]
+size = Vector2(20, 20)
+
+[node name="Node3D" type="Node3D"]
+
+[node name="Sphere" type="RigidBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 1, 0)
+can_sleep = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Sphere"]
+shape = SubResource("SphereShape3D_xlwel")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Sphere"]
+mesh = SubResource("SphereMesh_eifjh")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("BoxShape3D_i0ax8")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
+mesh = SubResource("PlaneMesh_8uen4")
+skeleton = NodePath("../..")
+
+[node name="Player" parent="." node_paths=PackedStringArray("playerCamera") instance=ExtResource("1_a1oo7")]
+playerCamera = NodePath("../MainCamera")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 3.70711, 2.12132)
+shadow_enabled = true
+
+[node name="MainCamera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.624098, 0.781346, 0, -0.781346, 0.624098, 1.27952, 7.60756, 7.49355)
