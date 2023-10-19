@@ -60,7 +60,6 @@ public partial class CameraController : Node3D
         Position = Position.Lerp(playerNode.Position, MOVEMENT_SPEED * (float)delta);
         //move camera to cameraTarget
         playerCamera.GlobalPosition = playerCamera.GlobalPosition.Lerp(cameraPositionTarget.GlobalPosition, MOVEMENT_SPEED * (float)delta);
-
         playerCamera.LookAt(this.GlobalPosition);
     }
 }

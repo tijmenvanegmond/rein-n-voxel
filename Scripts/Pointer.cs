@@ -3,7 +3,6 @@ using System;
 
 public partial class Pointer : Node3D
 {
-
     [Export]
     public Node3D Target { get; set; }
 

@@ -3,7 +3,7 @@
 [ext_resource type="Material" uid="uid://bg77cos2ugvtw" path="res://Materials/PlayerORM.tres" id="1_7l606"]
 [ext_resource type="Script" path="res://Scripts/Player/MovementController.cs" id="1_473ky"]
 [ext_resource type="Script" path="res://Scripts/Player/PlayerController.cs" id="1_ivvdk"]
-[ext_resource type="PackedScene" uid="uid://c3mloheginu26" path="res://Scenes/camera_pivot.tscn" id="2_01fol"]
+[ext_resource type="Script" path="res://Scripts/Player/CameraController.cs" id="4_tkquy"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_5e3ge"]
 
@@ -19,9 +19,6 @@ height = 1.5
 
 [node name="Player" type="Node3D"]
 script = ExtResource("1_ivvdk")
-
-[node name="CameraPivot" parent="." node_paths=PackedStringArray("playerNode") instance=ExtResource("2_01fol")]
-playerNode = NodePath("../CharacterBody3D")
 
 [node name="CharacterBody3D" type="CharacterBody3D" parent="." node_paths=PackedStringArray("cameraPivot", "Pivot")]
 script = ExtResource("1_473ky")
@@ -53,3 +50,10 @@ skeleton = NodePath("../Body")
 [node name="Body" type="MeshInstance3D" parent="CharacterBody3D/BodyPivot"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.75, 0)
 mesh = SubResource("CapsuleMesh_m3t4p")
+
+[node name="CameraPivot" type="Marker3D" parent="." node_paths=PackedStringArray("playerNode")]
+script = ExtResource("4_tkquy")
+playerNode = NodePath("../CharacterBody3D")
+
+[node name="CameraPositionTarget" type="Marker3D" parent="CameraPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -5)

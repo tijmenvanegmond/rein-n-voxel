@@ -35,14 +35,14 @@ public partial class MovementController : CharacterBody3D
 
 		var forward = cameraPivot.GlobalTransform.Basis;
 
-		MovementDirection = (forward * new Vector3(inputDir.X, 0, inputDir.Y)).Normalized();
+		MovementDirection = (forward * new Vector3(inputDir.X, 0, inputDir.Y) * -1).Normalized();
 
 		if (MovementDirection != Vector3.Zero)
 		{
 			velocity.X = MovementDirection.X * Speed;
 			velocity.Z = MovementDirection.Z * Speed;
 
-			Pivot.LookAt(Position + MovementDirection);
+			Pivot.LookAt(Position - MovementDirection);
 
 		}
 		else
