@@ -20,42 +20,36 @@ public partial class TerrainEdit : Node3D
 
 	public override void _PhysicsProcess(double delta)
 	{
-		if (Input.IsActionJustPressed("place_terrain"))
+		//cast ray from mouse
+		var mousePosition = GetViewport().GetMousePosition();
+		var from = playerCamera.ProjectRayOrigin(mousePosition);
+		var to = from + playerCamera.ProjectRayNormal(mousePosition) * RayLength;
+		var spaceState = GetWorld3D().DirectSpaceState;
+		var query = PhysicsRayQueryParameters3D.Create(from, to);
+		var result = spaceState.IntersectRay(query);
+
+		if (result.Count == 0)
 		{
-			var mousePosition = GetViewport().GetMousePosition();
-			var from = playerCamera.ProjectRayOrigin(mousePosition);
-			var to = from + playerCamera.ProjectRayNormal(mousePosition) * RayLength;
-			var spaceState = GetWorld3D().DirectSpaceState;
-			// use global coordinates, not local to node
-			var query = PhysicsRayQueryParameters3D.Create(from, to);
-			var result = spaceState.IntersectRay(query);
-			if (result.Count > 0)
-			{
-				GD.Print("Hit at point: ", result["position"]); //["position", "normal", "collider_id", "collider", "shape", "rid"]
-				var key = (Vector3I)result["position"];
-				customSignals.EmitSignal(CustomSignals.SignalName.EditTerrain, key, (byte)1);
-			}
-			else
-				GD.Print("No Hit?");
+			cursor.Visible = false;
+			GD.Print("No Hit?");
+			return;
 		}
 
-		if (Input.IsActionJustPressed("remove_terrain"))
+		var key = (Vector3I)result["position"];
+		if (cursor != null)
 		{
-			var mousePosition = GetViewport().GetMousePosition();
-			var from = playerCamera.ProjectRayOrigin(mousePosition);
-			var to = from + playerCamera.ProjectRayNormal(mousePosition) * RayLength;
-			var spaceState = GetWorld3D().DirectSpaceState;
-			// use global coordinates, not local to node
-			var query = PhysicsRayQueryParameters3D.Create(from, to);
-			var result = spaceState.IntersectRay(query);
-			if (result.Count > 0)
-			{
-				GD.Print("Hit at point: ", result["position"]); //["position", "normal", "collider_id", "collider", "shape", "rid"]
-				var key = (Vector3I)result["position"];
-				customSignals.EmitSignal(CustomSignals.SignalName.EditTerrain, key, (byte)0);
-			}
-			else
-				GD.Print("No Hit?");
+			cursor.Visible = true;
+			cursor.GlobalPosition = key;
+		};
+
+		if (Input.IsActionJustPressed("place_terrain"))
+		{
+
+			customSignals.EmitSignal(CustomSignals.SignalName.EditTerrain, key, (byte)1);
+		}
+		else if (Input.IsActionJustPressed("remove_terrain"))
+		{
+			customSignals.EmitSignal(CustomSignals.SignalName.EditTerrain, key, (byte)0);
 		}
 	}
 }

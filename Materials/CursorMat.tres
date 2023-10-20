@@ -1,0 +1,10 @@
+[gd_resource type="ORMMaterial3D" format=3 uid="uid://cto3ycpmk78ly"]
+
+[resource]
+transparency = 1
+albedo_color = Color(1, 0.435294, 0, 0.541176)
+emission_enabled = true
+emission = Color(0.996094, 0.488281, 0.09375, 1)
+rim_enabled = true
+rim_tint = 0.46
+backlight_enabled = true

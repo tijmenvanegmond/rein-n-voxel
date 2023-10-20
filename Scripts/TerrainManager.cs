@@ -22,7 +22,7 @@ public partial class TerrainManager : Node
 
 	public void OnTerrainEdit(Vector3I key, byte value)
 	{
-		GD.Print("Doing an Terrain Edit it went:");
+		GD.Print($"Doing an Terrain Edit at:{key} to {value}");
 		SetVoxel(key,value);
 		
 	}
@@ -69,8 +69,7 @@ public partial class TerrainManager : Node
 								   		posKey.Y % CHUNK_SIZE,
 								   		posKey.Z % CHUNK_SIZE);
 
-		foundChunk.SetLocalVoxel(remains, voxelData);
-		return true;
+		return foundChunk.SetLocalVoxel(remains, voxelData);
 	}
 
 

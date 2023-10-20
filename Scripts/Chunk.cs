@@ -4,8 +4,7 @@ public partial class Chunk : StaticBody3D
 {
     [Export]
     public bool isGenerated { get; private set; }
-    [Export]
-    public int doUpdateInt { get; private set; }
+   
     public const int CHUNK_SIZE = 12;
     public const int CHUNK_DIVISIONS = 12;
     byte[,,] dataArray;
@@ -16,6 +15,10 @@ public partial class Chunk : StaticBody3D
     TerrainManager terrainManager;
     Vector3I key;
     int numOfSolid = 0;
+    int doMeshUpdateInt = 0;
+    public void PlanMeshUpdate(){
+        if(doMeshUpdateInt == 0) doMeshUpdateInt = 1;
+    }
 
     public void Init(Vector3I _key, TerrainManager _terrainManager)
     {
@@ -23,25 +26,25 @@ public partial class Chunk : StaticBody3D
         terrainManager = _terrainManager;
         Position = ((Vector3)key) * Chunk.CHUNK_SIZE;
         GenerateData();
-        doUpdateInt = 1;
+        PlanMeshUpdate();
     }
 
     public override void _Process(double delta)
     {
-        if (doUpdateInt < 1)
+        if (doMeshUpdateInt < 1)
             return;
 
-        doUpdateInt++;
+        doMeshUpdateInt++;
 
-        if (doUpdateInt > 100)
+        if (doMeshUpdateInt > 100)
         {
             GD.Print($"Mesh[{key}] failed to update for a 100 frames!");
-            doUpdateInt = 0; // early to prevent infinite loops
+            doMeshUpdateInt = 0; // early to prevent infinite loops
         }
 
         GenerateMesh();
 
-        doUpdateInt = 0;
+        doMeshUpdateInt = 0;
     }
 
     public void GenerateData()
@@ -84,12 +87,7 @@ public partial class Chunk : StaticBody3D
             loc.Z < dataArrSize && loc.Z >= 0)
         {
             dataArray[loc.X, loc.Y, loc.Z] = byteValue;
-
-            if(doUpdateInt < 1)
-            {
-                doUpdateInt = 1;
-            }
-            
+            PlanMeshUpdate();            
             return true;
         }
         return false;
