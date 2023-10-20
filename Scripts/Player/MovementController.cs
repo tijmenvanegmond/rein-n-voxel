@@ -6,7 +6,7 @@ public partial class MovementController : CharacterBody3D
 	[Export]
 	public Node3D cameraPivot;
 	[Export]
-	public Node3D Pivot;
+	public Node3D BodyPivot;
 	[Export]
 	public const float Speed = 5.0f;
 	[Export]
@@ -33,16 +33,14 @@ public partial class MovementController : CharacterBody3D
 		// As good practice, you should replace UI actions with custom gameplay actions.
 		Vector2 inputDir = Input.GetVector("move_left", "move_right", "move_forward", "move_back");
 
-		var forward = cameraPivot.GlobalTransform.Basis;
-
-		MovementDirection = (forward * new Vector3(inputDir.X, 0, inputDir.Y) * -1).Normalized();
+		MovementDirection = (cameraPivot.GlobalTransform.Basis * new Vector3(inputDir.X, 0, inputDir.Y) * -1).Normalized();
 
 		if (MovementDirection != Vector3.Zero)
 		{
 			velocity.X = MovementDirection.X * Speed;
 			velocity.Z = MovementDirection.Z * Speed;
 
-			Pivot.LookAt(Position - MovementDirection);
+			BodyPivot.LookAt(Position - MovementDirection);
 
 		}
 		else

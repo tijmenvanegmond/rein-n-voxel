@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://c014w2qgxwxca"]
+[gd_scene load_steps=5 format=3 uid="uid://b8n15q7e7bwwf"]
 
 [ext_resource type="Script" path="res://Scripts/TerrainManager.cs" id="1_2mbxs"]
 [ext_resource type="Script" path="res://Scripts/GameController.cs" id="1_s3akr"]
@@ -9,7 +9,7 @@
 script = ExtResource("1_s3akr")
 playerScene = ExtResource("3_tst67")
 terrainManager = NodePath("Terrain")
-ChunkLoadRadius = 1
+ChunkLoadRadius = 2
 ChunkLoadDepth = 1
 
 [node name="Sun" type="DirectionalLight3D" parent="."]

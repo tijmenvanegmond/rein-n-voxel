@@ -1,38 +1,43 @@
-[gd_scene load_steps=9 format=3 uid="uid://i4x353k1mnxo"]
+[gd_scene load_steps=10 format=3 uid="uid://i4x353k1mnxo"]
 
-[ext_resource type="Material" path="res://Materials/PlayerORM.tres" id="1_7l606"]
+[ext_resource type="Material" uid="uid://bg77cos2ugvtw" path="res://Materials/PlayerORM.tres" id="1_7l606"]
 [ext_resource type="Script" path="res://Scripts/Player/MovementController.cs" id="1_473ky"]
 [ext_resource type="Script" path="res://Scripts/Player/PlayerController.cs" id="1_ivvdk"]
 [ext_resource type="Script" path="res://Scripts/Player/CameraController.cs" id="4_tkquy"]
+[ext_resource type="Script" path="res://Scripts/Player/TerrainEdit.cs" id="5_vaoex"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_5e3ge"]
+radius = 0.3
+height = 1.6
 
 [sub_resource type="SphereMesh" id="SphereMesh_x2od4"]
-radius = 0.4
-height = 0.8
+radius = 0.3
+height = 0.6
 
 [sub_resource type="BoxMesh" id="BoxMesh_re2g3"]
 size = Vector3(0.05, 0.1, 0.2)
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_m3t4p"]
+radius = 0.3
 height = 1.5
 
 [node name="Player" type="Node3D" node_paths=PackedStringArray("movementController")]
 script = ExtResource("1_ivvdk")
 movementController = NodePath("CharacterBody3D")
 
-[node name="CharacterBody3D" type="CharacterBody3D" parent="." node_paths=PackedStringArray("cameraPivot", "Pivot")]
+[node name="CharacterBody3D" type="CharacterBody3D" parent="." node_paths=PackedStringArray("cameraPivot", "BodyPivot")]
 floor_max_angle = 0.959931
 floor_snap_length = 0.05
 script = ExtResource("1_473ky")
 cameraPivot = NodePath("../CameraPivot")
-Pivot = NodePath("BodyPivot")
+BodyPivot = NodePath("BodyPivot")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("CapsuleShape3D_5e3ge")
 
 [node name="BodyPivot" type="Node3D" parent="CharacterBody3D"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
 
 [node name="Head" type="MeshInstance3D" parent="CharacterBody3D/BodyPivot"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
@@ -60,3 +65,6 @@ playerNode = NodePath("../CharacterBody3D")
 
 [node name="CameraPositionTarget" type="Marker3D" parent="CameraPivot"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -5)
+
+[node name="TerrainEdit" type="Node3D" parent="."]
+script = ExtResource("5_vaoex")
