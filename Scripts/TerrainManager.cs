@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Diagnostics;
 using Godot;
 
 public partial class TerrainManager : Node
@@ -8,12 +7,24 @@ public partial class TerrainManager : Node
 	public PackedScene chunkScene { get; set; }
 	Dictionary<Vector3I, Chunk> chunkDict = new Dictionary<Vector3I, Chunk>();
 	const int CHUNK_SIZE = Chunk.CHUNK_SIZE;
-
 	public FastNoiseLite noise = new FastNoiseLite();
+	private CustomSignals customSignals;
 
+	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		customSignals = GetNode<CustomSignals>("/root/CustomSignals");
+
+		customSignals.EditTerrain += OnTerrainEdit;
+
 		noise.Seed = (int)Time.GetTicksMsec();
+	}
+
+	public void OnTerrainEdit(Vector3I key, byte value)
+	{
+		GD.Print("Doing an Terrain Edit it went:");
+		SetVoxel(key,value);
+		
 	}
 
 	public void SpawnChunks(Vector3 origin, int radius = 4, int depth = 3)
@@ -43,6 +54,25 @@ public partial class TerrainManager : Node
 
 		return chunkDict[key];
 	}
+
+	public bool SetVoxel(Vector3I posKey, byte voxelData)
+	{
+		Vector3I chunkKey = new Vector3I(Mathf.FloorToInt(posKey.X / CHUNK_SIZE),
+										Mathf.FloorToInt(posKey.Y / CHUNK_SIZE),
+										Mathf.FloorToInt(posKey.Z / CHUNK_SIZE));
+
+		var foundChunk = GetChunk(chunkKey);
+		if (foundChunk == null || !foundChunk.isGenerated)
+			return false;
+
+		Vector3I remains = new Vector3I(posKey.X % CHUNK_SIZE,
+								   		posKey.Y % CHUNK_SIZE,
+								   		posKey.Z % CHUNK_SIZE);
+
+		foundChunk.SetLocalVoxel(remains, voxelData);
+		return true;
+	}
+
 
 	public bool GetVoxel(Vector3I posKey, out byte voxelData)
 	{
