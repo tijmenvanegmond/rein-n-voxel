@@ -34,7 +34,7 @@ public partial class TerrainEdit : Node3D
 			GD.Print("No Hit?");
 			return;
 		}
-
+		//Raycast hit something
 		var key = (Vector3I)result["position"];
 		if (cursor != null)
 		{

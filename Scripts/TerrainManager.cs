@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Drawing;
 using Godot;
 
 public partial class TerrainManager : Node
@@ -7,7 +8,8 @@ public partial class TerrainManager : Node
 	public PackedScene chunkScene { get; set; }
 	Dictionary<Vector3I, Chunk> chunkDict = new Dictionary<Vector3I, Chunk>();
 	const int CHUNK_SIZE = Chunk.CHUNK_SIZE;
-	public FastNoiseLite noise = new FastNoiseLite();
+	const int CHUNK_DIVISIONS = Chunk.CHUNK_DIVISIONS;
+	private FastNoiseLite noise = new FastNoiseLite();
 	private CustomSignals customSignals;
 
 	// Called when the node enters the scene tree for the first time.
@@ -23,8 +25,43 @@ public partial class TerrainManager : Node
 	public void OnTerrainEdit(Vector3I key, byte value)
 	{
 		GD.Print($"Doing an Terrain Edit at:{key} to {value}");
-		SetVoxel(key,value);
-		
+		SetVoxel(key, value);
+
+	}
+
+	public byte[,,] GenerateData(Vector3 startPost, int dataArrSize = CHUNK_SIZE + 1)
+	{
+		//dataArrSize is just so i over gen at the edges (and do quick checks on it)
+		var dataArray = new byte[dataArrSize, dataArrSize, dataArrSize];
+
+		var HEIGHT_MULTIPLIER = 25f;
+		var SCALE_MULTIPLIER = 3.2f;
+		var ROCK_SCALE_MULTIPLIER = 1.0f;
+		var CUBE_SIZE = (float)(CHUNK_SIZE / CHUNK_DIVISIONS);
+		var numOfSolid = 0;
+
+		for (int x = 0; x < dataArrSize; x++)
+		{
+			for (int z = 0; z < dataArrSize; z++)
+			{
+				float height = noise.GetNoise2D((startPost.X + x) / CUBE_SIZE / SCALE_MULTIPLIER,
+																(startPost.Z + z) / CUBE_SIZE / SCALE_MULTIPLIER) * HEIGHT_MULTIPLIER;
+				for (int y = 0; y < dataArrSize; y++)
+				{
+
+					float some3dnoise = noise.GetNoise3D((startPost.X + x) / CUBE_SIZE / ROCK_SCALE_MULTIPLIER,
+														 (startPost.Y + y) / CUBE_SIZE / ROCK_SCALE_MULTIPLIER,
+														 (startPost.Z + z) / CUBE_SIZE / ROCK_SCALE_MULTIPLIER) * 40f;
+					float actualDensity = height - (startPost.Y + y) + some3dnoise;
+					var byteValue = actualDensity < 1 ? (byte)1 : (byte)0;
+					dataArray[x, y, z] = byteValue;
+
+					numOfSolid += byteValue;
+				}
+			}
+		}
+
+		return dataArray;
 	}
 
 	public void SpawnChunks(Vector3 origin, int radius = 4, int depth = 3)
@@ -103,6 +140,7 @@ public partial class TerrainManager : Node
 		newChunk.Name = $"Chunk{key}";
 
 		chunkDict.Add(key, newChunk);
-		newChunk.Init(key, this);
+		var data = GenerateData(key * CHUNK_SIZE);
+		newChunk.Init(key, data, this);
 	}
 }

@@ -14,18 +14,18 @@ public partial class Chunk : StaticBody3D
     Chunk[] directNeighbours = new Chunk[6];
     TerrainManager terrainManager;
     Vector3I key;
-    int numOfSolid = 0;
     int doMeshUpdateInt = 0;
     public void PlanMeshUpdate(){
         if(doMeshUpdateInt == 0) doMeshUpdateInt = 1;
     }
 
-    public void Init(Vector3I _key, TerrainManager _terrainManager)
+    public void Init(Vector3I _key,   byte[,,]  _dataArray,  TerrainManager _terrainManager)
     {
         key = _key;
         terrainManager = _terrainManager;
-        Position = ((Vector3)key) * Chunk.CHUNK_SIZE;
-        GenerateData();
+        Position = ((Vector3)key) * CHUNK_SIZE;
+        dataArray = _dataArray;
+        //GenerateData();
         PlanMeshUpdate();
     }
 
@@ -47,39 +47,7 @@ public partial class Chunk : StaticBody3D
         doMeshUpdateInt = 0;
     }
 
-    public void GenerateData()
-    {
-        //dataArrSize is just so i over gen at the edges (and do quick checks on it)
-        dataArray = new byte[dataArrSize, dataArrSize, dataArrSize];
-
-        var HEIGHT_MULTIPLIER = 25f;
-        var SCALE_MULTIPLIER = 3.2f;
-        var ROCK_SCALE_MULTIPLIER = 1.0f;
-        var CUBE_SIZE = (float)(CHUNK_SIZE / CHUNK_DIVISIONS);       
-
-        for (int x = 0; x < dataArrSize; x++)
-        {
-            for (int z = 0; z < dataArrSize; z++)
-            {
-                float height = terrainManager.noise.GetNoise2D((x + Position.X) / CUBE_SIZE / SCALE_MULTIPLIER,
-                                                                (z + Position.Z) / CUBE_SIZE / SCALE_MULTIPLIER) * HEIGHT_MULTIPLIER;
-                for (int y = 0; y < dataArrSize; y++)
-                {
-
-                    float some3dnoise = terrainManager.noise.GetNoise3D((x + Position.X) / CUBE_SIZE / ROCK_SCALE_MULTIPLIER,
-                                                                        (y + Position.Y) / CUBE_SIZE / ROCK_SCALE_MULTIPLIER,
-                                                                        (z + Position.Z) / CUBE_SIZE / ROCK_SCALE_MULTIPLIER) * 40f;
-                    float actualDensity = height - (Position.Y + y) + some3dnoise;
-                    var byteValue = actualDensity < 1 ? (byte)1 : (byte)0;
-                    dataArray[x, y, z] = byteValue;
-                    
-                    numOfSolid += byteValue;
-                }
-            }
-        }
-
-        isGenerated = true;
-    }
+ 
 
     public bool SetLocalVoxel(Vector3I loc, byte byteValue){
         if (loc.X < dataArrSize && loc.X >= 0 &&
@@ -112,12 +80,12 @@ public partial class Chunk : StaticBody3D
 
     public Mesh GenerateMesh()
     {
-        if(numOfSolid == 0 || numOfSolid == dataArrSize*dataArrSize*dataArrSize)
-        {
-            //Mesh all air or all solid
-            surfaceMesh.Mesh = null;
-            return null;
-        }
+        // if(numOfSolid == 0 || numOfSolid == dataArrSize*dataArrSize*dataArrSize)
+        // {
+        //     //Mesh all air or all solid
+        //     surfaceMesh.Mesh = null;
+        //     return null;
+        // }
 
         byte[,,] dataPlus1 = new byte[CHUNK_SIZE + 1, CHUNK_SIZE + 1, CHUNK_SIZE + 1];
 
