@@ -44,8 +44,7 @@ public partial class TerrainEdit : Node3D
 
 		if (Input.IsActionJustPressed("place_terrain"))
 		{
-
-			customSignals.EmitSignal(CustomSignals.SignalName.EditTerrain, key, (byte)1);
+			customSignals.EmitSignal(CustomSignals.SignalName.EditTerrain, key+Vector3I.Up, (byte)1);
 		}
 		else if (Input.IsActionJustPressed("remove_terrain"))
 		{

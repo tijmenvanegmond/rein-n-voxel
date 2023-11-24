@@ -9,15 +9,11 @@ static public class MarchingCubes
 	{
 		target = tar;
 	}
-	static public void SetWindingOrder(int v0, int v1, int v2)
-	{
-		windingOrder = new int[] { v0, v1, v2 };
-	}
-
 	static public Mesh CreateMesh(byte[,,] voxels)
 	{
 		List<Vector3> verts = new List<Vector3>();
-		List<int> indices = new List<int>();		
+		List<int> indices = new List<int>();	
+		List<int> uvs = new List<int>();	
 		List<Vector3> normals = new List<Vector3>();
 
 		var cube = new byte[8];
@@ -40,9 +36,9 @@ static public class MarchingCubes
         surfaceArray.Resize((int)Mesh.ArrayType.Max);
 
         surfaceArray[(int)Mesh.ArrayType.Vertex] = verts.ToArray();
-        //surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs.ToArray();
-        surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
         surfaceArray[(int)Mesh.ArrayType.Index] = indices.ToArray();
+    	//surfaceArray[(int)Mesh.ArrayType.TexUV] = uvs.ToArray();
+       	surfaceArray[(int)Mesh.ArrayType.Normal] = normals.ToArray();
 
         var arrMesh = new ArrayMesh();
         arrMesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surfaceArray);
@@ -115,7 +111,7 @@ static public class MarchingCubes
 								
 				
 			}
-
+			//Store simple normals
 			var lastVertsAdded = verts.GetRange(verts.Count - 3,3);
 			var A = lastVertsAdded[1] - lastVertsAdded[0];
 			var B = lastVertsAdded[2] - lastVertsAdded[0];
@@ -136,7 +132,7 @@ static public class MarchingCubes
 	static float target = 0f;
 
 	//Winding order of triangles use 2,1,0 or 0,1,2
-	static int[] windingOrder = new int[] { 0, 1, 2 };
+	static int[] windingOrder = new int[] { 2, 1, 0 };
 
 	// vertexOffset lists the positions, relative to vertex0, of each of the 8 vertices of a cube
 	// vertexOffset[8][3]

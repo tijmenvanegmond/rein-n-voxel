@@ -29,7 +29,7 @@ public partial class TerrainManager : Node
 
 	}
 
-	public byte[,,] GenerateData(Vector3 startPost, int dataArrSize = CHUNK_SIZE + 1)
+	public byte[,,] GenerateData(Vector3 startPos, int dataArrSize = CHUNK_SIZE + 1)
 	{
 		//dataArrSize is just so i over gen at the edges (and do quick checks on it)
 		var dataArray = new byte[dataArrSize, dataArrSize, dataArrSize];
@@ -44,16 +44,10 @@ public partial class TerrainManager : Node
 		{
 			for (int z = 0; z < dataArrSize; z++)
 			{
-				float height = noise.GetNoise2D((startPost.X + x) / CUBE_SIZE / SCALE_MULTIPLIER,
-																(startPost.Z + z) / CUBE_SIZE / SCALE_MULTIPLIER) * HEIGHT_MULTIPLIER;
+
 				for (int y = 0; y < dataArrSize; y++)
 				{
-
-					float some3dnoise = noise.GetNoise3D((startPost.X + x) / CUBE_SIZE / ROCK_SCALE_MULTIPLIER,
-														 (startPost.Y + y) / CUBE_SIZE / ROCK_SCALE_MULTIPLIER,
-														 (startPost.Z + z) / CUBE_SIZE / ROCK_SCALE_MULTIPLIER) * 40f;
-					float actualDensity = height - (startPost.Y + y) + some3dnoise;
-					var byteValue = actualDensity < 1 ? (byte)1 : (byte)0;
+					var byteValue = y + startPos.Y < 0 ? (byte)1 : (byte)0;
 					dataArray[x, y, z] = byteValue;
 
 					numOfSolid += byteValue;
