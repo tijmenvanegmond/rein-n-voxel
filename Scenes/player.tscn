@@ -52,7 +52,6 @@ skeleton = NodePath("../Body")
 
 [node name="OmniLight3D" type="OmniLight3D" parent="CharacterBody3D/BodyPivot/Head"]
 light_color = Color(0.984375, 0.992188, 0, 1)
-light_energy = 6.828
 
 [node name="Hand" type="MeshInstance3D" parent="CharacterBody3D/BodyPivot"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 1.1, 0.4)
