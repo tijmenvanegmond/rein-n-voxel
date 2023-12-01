@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using Godot;
 
 public partial class TerrainManager : Node
@@ -22,15 +21,15 @@ public partial class TerrainManager : Node
 		noise.Seed = (int)Time.GetTicksMsec();
 	}
 
-	public void OnTerrainEdit(Vector3I key, byte value)
+	public void OnTerrainEdit(Vector3I coord, byte value)
 	{
-		GD.Print($"Doing an Terrain Edit at:{key} to {value}");
-		SetVoxel(key, value);
-		SetVoxel(key + Vector3I.Down, value);
-		SetVoxel(key + Vector3I.Up, value);
+		GD.Print($"Doing an Terrain Edit at:{coord} to {value}");
+		SetVoxel(coord, value);
+		SetVoxel(coord + Vector3I.Down, value);
+		SetVoxel(coord + Vector3I.Up, value);
 	}
 
-	public byte[,,] GenerateData(Vector3 startPos, int dataArrSize = CHUNK_SIZE + 1)
+	public byte[,,] GenerateData(Vector3 startPos, int dataArrSize = CHUNK_SIZE)
 	{
 		//dataArrSize is just so i over gen at the edges (and do quick checks on it)
 		var dataArray = new byte[dataArrSize, dataArrSize, dataArrSize];
@@ -45,7 +44,6 @@ public partial class TerrainManager : Node
 		{
 			for (int z = 0; z < dataArrSize; z++)
 			{
-
 				for (int y = 0; y < dataArrSize; y++)
 				{
 					var byteValue = y + startPos.Y < 0 ? (byte)1 : (byte)0;
@@ -70,7 +68,7 @@ public partial class TerrainManager : Node
 				for (int y = -depth; y <= depth; y++)
 				{
 					var key = new Vector3I(originChunkKey.X + x, originChunkKey.Y + y, originChunkKey.Z + z);
-					if (GetChunk(key) == null)
+					if (GetChunkByKey(key) == null)
 					{
 						CreateChunk(key);
 					}
@@ -79,7 +77,7 @@ public partial class TerrainManager : Node
 		}
 	}
 
-	public Chunk GetChunk(Vector3I key)
+	public Chunk GetChunkByKey(Vector3I key)
 	{
 		if (!chunkDict.ContainsKey(key))
 			return null;
@@ -87,42 +85,74 @@ public partial class TerrainManager : Node
 		return chunkDict[key];
 	}
 
-	public bool SetVoxel(Vector3I posKey, byte voxelData)
+	public Chunk GetChunkByVoxelCoords(Vector3I coords)
 	{
-		Vector3I chunkKey = new Vector3I(Mathf.FloorToInt(posKey.X / (float)CHUNK_SIZE),
-										 Mathf.FloorToInt(posKey.Y / (float)CHUNK_SIZE),
-										 Mathf.FloorToInt(posKey.Z / (float)CHUNK_SIZE));
+		Vector3I chunkKey = new Vector3I(Mathf.FloorToInt(coords.X / (float)CHUNK_SIZE),
+										 Mathf.FloorToInt(coords.Y / (float)CHUNK_SIZE),
+										 Mathf.FloorToInt(coords.Z / (float)CHUNK_SIZE));
 
-		var foundChunk = GetChunk(chunkKey);
+		return GetChunkByKey(chunkKey);
+	}
+
+	public bool SetVoxel(Vector3I coords, byte voxelData)
+	{
+		var foundChunk = GetChunkByVoxelCoords(coords);
 		if (foundChunk == null)
 		{
-			GD.Print($"Cant find chunk {chunkKey}");
+			GD.Print($"Cant find chunk for coords:{coords}");
 			return false;
 		}
 
-		var remains = posKey - new Vector3I(chunkKey.X * CHUNK_SIZE,
-								   			chunkKey.Y * CHUNK_SIZE,
-								   			chunkKey.Z * CHUNK_SIZE);
+		var remains = coords - foundChunk.key * CHUNK_SIZE;
+
+		//update neighbouring chunks
+		if (remains.X == 0)
+		{
+			var neighbour = GetChunkByKey(foundChunk.key - Vector3I.Right);
+			neighbour.PlanMeshUpdate();
+		}
+		if (remains.X == CHUNK_SIZE - 1)
+		{
+			var neighbour = GetChunkByKey(foundChunk.key + Vector3I.Right);
+			neighbour.PlanMeshUpdate();
+		}
+
+		if (remains.Y == 0)
+		{
+			var neighbour = GetChunkByKey(foundChunk.key - Vector3I.Up);
+			neighbour.PlanMeshUpdate();
+		}
+		if (remains.Y == CHUNK_SIZE - 1)
+		{
+			var neighbour = GetChunkByKey(foundChunk.key + Vector3I.Up);
+			neighbour.PlanMeshUpdate();
+		}
+		if (remains.Z == 0)
+		{
+			var neighbour = GetChunkByKey(foundChunk.key - Vector3I.Back);
+			neighbour.PlanMeshUpdate();
+		}
+		if (remains.Z == CHUNK_SIZE - 1)
+		{
+			var neighbour = GetChunkByKey(foundChunk.key + Vector3I.Back);
+			neighbour.PlanMeshUpdate();
+		}
 
 		return foundChunk.SetLocalVoxel(remains, voxelData);
 	}
 
-
-	public bool GetVoxel(Vector3I posKey, out byte voxelData)
+	public bool GetVoxel(Vector3I coords, out byte voxelData)
 	{
 		voxelData = 0;
 
-		Vector3I chunkKey = new Vector3I(Mathf.FloorToInt(posKey.X / (float)CHUNK_SIZE),
-										 Mathf.FloorToInt(posKey.Y / (float)CHUNK_SIZE),
-										 Mathf.FloorToInt(posKey.Z / (float)CHUNK_SIZE));
-
-		var foundChunk = GetChunk(chunkKey);
-		if (foundChunk == null || !foundChunk.isGenerated)
+		var foundChunk = GetChunkByVoxelCoords(coords);
+		if (foundChunk == null)
+		{
+			GD.Print($"Cant find chunk for coords:{coords}");
 			return false;
+		}
 
-		var remains = posKey - new Vector3I(chunkKey.X * CHUNK_SIZE,
-								   			chunkKey.Y * CHUNK_SIZE,
-								   			chunkKey.Z * CHUNK_SIZE);
+		var remains = coords - foundChunk.key * CHUNK_SIZE;
 
 		voxelData = foundChunk.GetLocalVoxel(remains);
 		return true;
@@ -130,7 +160,7 @@ public partial class TerrainManager : Node
 
 	private void CreateChunk(Vector3I key)
 	{
-		if (GetChunk(key) != null)
+		if (GetChunkByKey(key) != null)
 			return;
 
 		Chunk newChunk = chunkScene.Instantiate<Chunk>();

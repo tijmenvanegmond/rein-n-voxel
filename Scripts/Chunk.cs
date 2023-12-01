@@ -4,7 +4,7 @@ public partial class Chunk : StaticBody3D
 {
     [Export]
     public bool isGenerated { get; private set; }
-   
+
     public const int CHUNK_SIZE = 12;
     public const int CHUNK_DIVISIONS = 12;
     byte[,,] dataArray;
@@ -13,13 +13,14 @@ public partial class Chunk : StaticBody3D
     MeshInstance3D surfaceMesh;
     Chunk[] directNeighbours = new Chunk[6];
     TerrainManager terrainManager;
-    Vector3I key;
+    public Vector3I key { private set; get; }
     int doMeshUpdateInt = 0;
-    public void PlanMeshUpdate(){
-        if(doMeshUpdateInt == 0) doMeshUpdateInt = 1;
+    public void PlanMeshUpdate()
+    {
+        if (doMeshUpdateInt == 0) doMeshUpdateInt = 1;
     }
 
-    public void Init(Vector3I _key,   byte[,,]  _dataArray,  TerrainManager _terrainManager)
+    public void Init(Vector3I _key, byte[,,] _dataArray, TerrainManager _terrainManager)
     {
         key = _key;
         terrainManager = _terrainManager;
@@ -47,15 +48,16 @@ public partial class Chunk : StaticBody3D
         doMeshUpdateInt = 0;
     }
 
- 
 
-    public bool SetLocalVoxel(Vector3I loc, byte byteValue){
+
+    public bool SetLocalVoxel(Vector3I loc, byte byteValue)
+    {
         if (loc.X < dataArrSize && loc.X >= 0 &&
             loc.Y < dataArrSize && loc.Y >= 0 &&
             loc.Z < dataArrSize && loc.Z >= 0)
         {
             dataArray[loc.X, loc.Y, loc.Z] = byteValue;
-            PlanMeshUpdate();            
+            PlanMeshUpdate();
             return true;
         }
         return false;
