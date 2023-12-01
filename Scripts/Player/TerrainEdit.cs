@@ -31,7 +31,6 @@ public partial class TerrainEdit : Node3D
 		if (result.Count == 0)
 		{
 			cursor.Visible = false;
-			GD.Print("No Hit?");
 			return;
 		}
 		//Raycast hit something
@@ -44,7 +43,7 @@ public partial class TerrainEdit : Node3D
 
 		if (Input.IsActionJustPressed("place_terrain"))
 		{
-			customSignals.EmitSignal(CustomSignals.SignalName.EditTerrain, key+Vector3I.Up, (byte)1);
+			customSignals.EmitSignal(CustomSignals.SignalName.EditTerrain, key, (byte)1);
 		}
 		else if (Input.IsActionJustPressed("remove_terrain"))
 		{

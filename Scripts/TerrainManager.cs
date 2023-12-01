@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using Godot;
@@ -12,7 +13,6 @@ public partial class TerrainManager : Node
 	private FastNoiseLite noise = new FastNoiseLite();
 	private CustomSignals customSignals;
 
-	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		customSignals = GetNode<CustomSignals>("/root/CustomSignals");
@@ -26,7 +26,8 @@ public partial class TerrainManager : Node
 	{
 		GD.Print($"Doing an Terrain Edit at:{key} to {value}");
 		SetVoxel(key, value);
-
+		SetVoxel(key + Vector3I.Down, value);
+		SetVoxel(key + Vector3I.Up, value);
 	}
 
 	public byte[,,] GenerateData(Vector3 startPos, int dataArrSize = CHUNK_SIZE + 1)
@@ -88,17 +89,20 @@ public partial class TerrainManager : Node
 
 	public bool SetVoxel(Vector3I posKey, byte voxelData)
 	{
-		Vector3I chunkKey = new Vector3I(Mathf.FloorToInt(posKey.X / CHUNK_SIZE),
-										Mathf.FloorToInt(posKey.Y / CHUNK_SIZE),
-										Mathf.FloorToInt(posKey.Z / CHUNK_SIZE));
+		Vector3I chunkKey = new Vector3I(Mathf.FloorToInt(posKey.X / (float)CHUNK_SIZE),
+										 Mathf.FloorToInt(posKey.Y / (float)CHUNK_SIZE),
+										 Mathf.FloorToInt(posKey.Z / (float)CHUNK_SIZE));
 
 		var foundChunk = GetChunk(chunkKey);
-		if (foundChunk == null || !foundChunk.isGenerated)
+		if (foundChunk == null)
+		{
+			GD.Print($"Cant find chunk {chunkKey}");
 			return false;
+		}
 
-		Vector3I remains = new Vector3I(posKey.X % CHUNK_SIZE,
-								   		posKey.Y % CHUNK_SIZE,
-								   		posKey.Z % CHUNK_SIZE);
+		var remains = posKey - new Vector3I(chunkKey.X * CHUNK_SIZE,
+								   			chunkKey.Y * CHUNK_SIZE,
+								   			chunkKey.Z * CHUNK_SIZE);
 
 		return foundChunk.SetLocalVoxel(remains, voxelData);
 	}
