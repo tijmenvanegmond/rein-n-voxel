@@ -112,17 +112,17 @@ public partial class TerrainManager : Node
 	{
 		voxelData = 0;
 
-		Vector3I chunkKey = new Vector3I(Mathf.FloorToInt(posKey.X / CHUNK_SIZE),
-										Mathf.FloorToInt(posKey.Y / CHUNK_SIZE),
-										Mathf.FloorToInt(posKey.Z / CHUNK_SIZE));
+		Vector3I chunkKey = new Vector3I(Mathf.FloorToInt(posKey.X / (float)CHUNK_SIZE),
+										 Mathf.FloorToInt(posKey.Y / (float)CHUNK_SIZE),
+										 Mathf.FloorToInt(posKey.Z / (float)CHUNK_SIZE));
 
 		var foundChunk = GetChunk(chunkKey);
 		if (foundChunk == null || !foundChunk.isGenerated)
 			return false;
 
-		Vector3I remains = new Vector3I(posKey.X % CHUNK_SIZE,
-								   		posKey.Y % CHUNK_SIZE,
-								   		posKey.Z % CHUNK_SIZE);
+		var remains = posKey - new Vector3I(chunkKey.X * CHUNK_SIZE,
+								   			chunkKey.Y * CHUNK_SIZE,
+								   			chunkKey.Z * CHUNK_SIZE);
 
 		voxelData = foundChunk.GetLocalVoxel(remains);
 		return true;
