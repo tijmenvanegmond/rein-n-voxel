@@ -68,7 +68,7 @@ script = ExtResource("4_tkquy")
 playerNode = NodePath("../CharacterBody3D")
 
 [node name="CameraPositionTarget" type="Marker3D" parent="CameraPivot"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, -5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, -4)
 
 [node name="TerrainEdit" type="Node3D" parent="." node_paths=PackedStringArray("cursor")]
 script = ExtResource("5_vaoex")

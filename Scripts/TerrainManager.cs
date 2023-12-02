@@ -1,6 +1,6 @@
 using System;
-using System.Collections.Generic;
 using Godot;
+using Godot.Collections;
 
 public partial class TerrainManager : Node
 {
@@ -105,39 +105,6 @@ public partial class TerrainManager : Node
 
 		var remains = coords - foundChunk.key * CHUNK_SIZE;
 
-		//update neighbouring chunks
-		if (remains.X == 0)
-		{
-			var neighbour = GetChunkByKey(foundChunk.key - Vector3I.Right);
-			neighbour.PlanMeshUpdate();
-		}
-		if (remains.X == CHUNK_SIZE - 1)
-		{
-			var neighbour = GetChunkByKey(foundChunk.key + Vector3I.Right);
-			neighbour.PlanMeshUpdate();
-		}
-
-		if (remains.Y == 0)
-		{
-			var neighbour = GetChunkByKey(foundChunk.key - Vector3I.Up);
-			neighbour.PlanMeshUpdate();
-		}
-		if (remains.Y == CHUNK_SIZE - 1)
-		{
-			var neighbour = GetChunkByKey(foundChunk.key + Vector3I.Up);
-			neighbour.PlanMeshUpdate();
-		}
-		if (remains.Z == 0)
-		{
-			var neighbour = GetChunkByKey(foundChunk.key - Vector3I.Back);
-			neighbour.PlanMeshUpdate();
-		}
-		if (remains.Z == CHUNK_SIZE - 1)
-		{
-			var neighbour = GetChunkByKey(foundChunk.key + Vector3I.Back);
-			neighbour.PlanMeshUpdate();
-		}
-
 		return foundChunk.SetLocalVoxel(remains, voxelData);
 	}
 
@@ -166,9 +133,39 @@ public partial class TerrainManager : Node
 		Chunk newChunk = chunkScene.Instantiate<Chunk>();
 		AddChild(newChunk);
 		newChunk.Name = $"Chunk{key}";
-
 		chunkDict.Add(key, newChunk);
 		var data = GenerateData(key * CHUNK_SIZE);
 		newChunk.Init(key, data, this);
+
+		//add chunk to neighbours
+		var neighbours = new Dictionary<Vector3I, Chunk>();
+		var directions26 = new Vector3I[]
+		{
+			new Vector3I(-1, -1, -1), new Vector3I(-1, -1, 0), new Vector3I(-1, -1, 1),
+			new Vector3I(-1, 0, -1),  new Vector3I(-1, 0, 0),  new Vector3I(-1, 0, 1),
+			new Vector3I(-1, 1, -1),  new Vector3I(-1, 1, 0),  new Vector3I(-1, 1, 1),
+
+			new Vector3I(0, -1, -1),  new Vector3I(0, -1, 0),  new Vector3I(0, -1, 1),
+			new Vector3I(0, 0, -1), /*new Vector3I(0, 0, 0),*/   new Vector3I(0, 0, 1),
+			new Vector3I(0, 1, -1),   new Vector3I(0, 1, 0),   new Vector3I(0, 1, 1),
+
+			new Vector3I(1, -1, -1),  new Vector3I(1, -1, 0),  new Vector3I(1, -1, 1),
+			new Vector3I(1, 0, -1),   new Vector3I(1, 0, 0),   new Vector3I(1, 0, 1),
+			new Vector3I(1, 1, -1),   new Vector3I(1, 1, 0),   new Vector3I(1, 1, 1)
+		};
+
+		foreach (var direction in directions26)
+		{
+			var neighbourChunk = GetChunkByKey(key + direction);
+			if (neighbourChunk != null){
+				neighbourChunk.SetDirectNeighbour(-direction, newChunk); //add new chunk to neighbour
+				neighbours.Add(direction, neighbourChunk); //for new chunk
+			}
+			if (neighbourChunk == null){
+
+			}
+		}
+
+		newChunk.SetDirectNeighbours(neighbours);
 	}
 }

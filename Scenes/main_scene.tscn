@@ -22,3 +22,4 @@ script = ExtResource("1_2mbxs")
 chunkScene = ExtResource("2_ebcgn")
 
 [node name="MainCamera" type="Camera3D" parent="."]
+current = true
