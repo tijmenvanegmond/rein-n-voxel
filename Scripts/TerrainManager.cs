@@ -25,8 +25,8 @@ public partial class TerrainManager : Node
 	{
 		GD.Print($"Doing an Terrain Edit at:{coord} to {value}");
 		SetVoxel(coord, value);
-		SetVoxel(coord + Vector3I.Down, value);
-		SetVoxel(coord + Vector3I.Up, value);
+		//SetVoxel(coord + Vector3I.Down, value);
+		//SetVoxel(coord + Vector3I.Up, value);
 	}
 
 	public byte[,,] GenerateData(Vector3 startPos, int dataArrSize = CHUNK_SIZE)

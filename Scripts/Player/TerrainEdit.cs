@@ -34,7 +34,8 @@ public partial class TerrainEdit : Node3D
 			return;
 		}
 		//Raycast hit something
-		var key = (Vector3I)result["position"];
+		var rayHitPosition = (Vector3)result["position"];
+		var key = new Vector3I(Mathf.RoundToInt(rayHitPosition.X), Mathf.RoundToInt(rayHitPosition.Y), Mathf.RoundToInt(rayHitPosition.Z));
 		if (cursor != null)
 		{
 			cursor.Visible = true;
@@ -47,7 +48,7 @@ public partial class TerrainEdit : Node3D
 		}
 		else if (Input.IsActionJustPressed("remove_terrain"))
 		{
-			customSignals.EmitSignal(CustomSignals.SignalName.EditTerrain, key, (byte)0);
+			customSignals.EmitSignal(CustomSignals.SignalName.EditTerrain, key - Vector3I.Up, (byte)0);
 		}
 	}
 }
