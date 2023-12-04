@@ -11,7 +11,7 @@ public partial class Blink : PlayerAction
         if (timeBetween < (ulong)coolDownMs)
             return;
 
-        var goalPos = target.movementController.Position + target.movementController.MovementDirection * DASH_LENGTH;
+        var goalPos = target.movementController.Position + target.movementController.movementDirection * DASH_LENGTH;
        target.movementController.Position = target.movementController.Position.Lerp(goalPos, DASH_LENGTH);
 
         base.DoAction(target);

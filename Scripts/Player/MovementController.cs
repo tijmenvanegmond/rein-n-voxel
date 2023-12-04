@@ -13,7 +13,7 @@ public partial class MovementController : CharacterBody3D
 	public const float crouchedMovementSpeed = 2.5f;
 	[Export]
 	public const float jumpVelocity = 7f;
-	public Vector3 MovementDirection { get; protected set; }
+	public Vector3 movementDirection { get; protected set; }
 	float currentMovementSpeed = normalMovementSpeed;
 
 	// Get the gravity from the project settings to be synced with RigidBody nodes.
@@ -35,14 +35,14 @@ public partial class MovementController : CharacterBody3D
 		// As good practice, you should replace UI actions with custom gameplay actions.
 		Vector2 inputDir = Input.GetVector("move_left", "move_right", "move_forward", "move_back");
 
-		MovementDirection = (cameraPivot.GlobalTransform.Basis * new Vector3(inputDir.X, 0, inputDir.Y) * -1).Normalized();
+		movementDirection = (cameraPivot.GlobalTransform.Basis * new Vector3(inputDir.X, 0, inputDir.Y) * -1).Normalized();
 
-		if (MovementDirection != Vector3.Zero)
+		if (movementDirection != Vector3.Zero)
 		{
-			velocity.X = MovementDirection.X * currentMovementSpeed;
-			velocity.Z = MovementDirection.Z * currentMovementSpeed;
+			velocity.X = movementDirection.X * currentMovementSpeed;
+			velocity.Z = movementDirection.Z * currentMovementSpeed;
 
-			BodyPivot.LookAt(Position - MovementDirection);
+			BodyPivot.LookAt(Position - movementDirection);
 		}
 		else
 		{

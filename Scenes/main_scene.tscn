@@ -1,9 +1,26 @@
-[gd_scene load_steps=5 format=3 uid="uid://b8n15q7e7bwwf"]
+[gd_scene load_steps=8 format=3 uid="uid://b8n15q7e7bwwf"]
 
 [ext_resource type="Script" path="res://Scripts/TerrainManager.cs" id="1_2mbxs"]
 [ext_resource type="Script" path="res://Scripts/GameController.cs" id="1_s3akr"]
 [ext_resource type="PackedScene" uid="uid://ccigbadtb8rgw" path="res://Scenes/chunk.res" id="2_ebcgn"]
 [ext_resource type="PackedScene" uid="uid://i4x353k1mnxo" path="res://Scenes/player.tscn" id="3_tst67"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_4g16q"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_bjo3q"]
+sky_material = SubResource("ProceduralSkyMaterial_4g16q")
+
+[sub_resource type="Environment" id="Environment_i31d5"]
+background_mode = 2
+sky = SubResource("Sky_bjo3q")
+tonemap_mode = 2
+glow_enabled = true
+fog_enabled = true
+fog_light_color = Color(0.517647, 0.552941, 0.698039, 1)
+fog_density = 0.005
+volumetric_fog_density = 0.6529
 
 [node name="MainScene" type="Node3D" node_paths=PackedStringArray("terrainManager")]
 script = ExtResource("1_s3akr")
@@ -11,6 +28,9 @@ playerScene = ExtResource("3_tst67")
 terrainManager = NodePath("Terrain")
 ChunkLoadRadius = 2
 ChunkLoadDepth = 1
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_i31d5")
 
 [node name="Sun" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.636346, 0.553442, -0.537369, -0.472496, 0.271003, 0.838633, 0.609763, 0.787565, 0.0890478, 0, 0, 0)

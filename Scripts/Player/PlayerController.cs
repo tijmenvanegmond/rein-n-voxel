@@ -1,5 +1,4 @@
 using Godot;
-using System;
 
 public partial class PlayerController : Node
 {
@@ -12,8 +11,10 @@ public partial class PlayerController : Node
 	public PlayerState playerState = PlayerState.Normal;
 	[Export]
 	CollisionShape3D collider;
+	[Export]
+	AnimationPlayer animationPlayer;
 	Camera3D _playerCamera;
-	public PlayerAction Action_Down = new Blink();
+	public PlayerAction action_MovementAbility = new Blink();
 
 	[Export]
 	public Camera3D playerCamera
@@ -45,9 +46,9 @@ public partial class PlayerController : Node
 
 	public override void _Process(double delta)
 	{
-		if (Input.IsActionJustPressed("movement_abilty") && Action_Down != null)
+		if (Input.IsActionJustPressed("movement_abilty") && action_MovementAbility != null)
 		{
-			Action_Down.DoAction(this);
+			action_MovementAbility.DoAction(this);
 		}
 
 		if (Input.IsActionJustPressed("crouch"))
@@ -55,10 +56,21 @@ public partial class PlayerController : Node
 			ToggleCrouch();
 		}
 
+		if (movementController.movementDirection != Vector3.Zero)
+		{
+			if (animationPlayer.CurrentAnimation != "running")
+				animationPlayer.Play("running");
+		}
+		else
+		{
+			if (animationPlayer.CurrentAnimation != "idle")
+				animationPlayer.Play("idle");
+		}
+
 		base._Process(delta);
 	}
 
-	
+
 	public void ToggleCrouch()
 	{
 		if (playerState == PlayerState.Normal)
