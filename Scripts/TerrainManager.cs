@@ -24,10 +24,22 @@ public partial class TerrainManager : Node
 	public void OnTerrainEdit(Vector3I coord, byte value)
 	{
 		GD.Print($"Doing an Terrain Edit at:{coord} to {value}");
-		SetVoxel(coord, value);
-		//SetVoxel(coord + Vector3I.Down, value);
-		//SetVoxel(coord + Vector3I.Up, value);
+
+		var radius = 0;
+
+		for (int x = -radius; x <= radius; x++)
+		{
+			for (int y = -radius; y <= radius; y++)
+			{
+				for (int z = -radius; z <= radius; z++)
+				{
+					var voxelCoord = coord + new Vector3I(x, y, z);
+					SetVoxel(voxelCoord, value); // Update the voxel with the desired value
+				}
+			}
+		}
 	}
+
 
 	public byte[,,] GenerateData(Vector3 startPos, int dataArrSize = CHUNK_SIZE)
 	{
@@ -157,11 +169,13 @@ public partial class TerrainManager : Node
 		foreach (var direction in directions26)
 		{
 			var neighbourChunk = GetChunkByKey(key + direction);
-			if (neighbourChunk != null){
+			if (neighbourChunk != null)
+			{
 				neighbourChunk.SetDirectNeighbour(-direction, newChunk); //add new chunk to neighbour
 				neighbours.Add(direction, neighbourChunk); //for new chunk
 			}
-			if (neighbourChunk == null){
+			if (neighbourChunk == null)
+			{
 
 			}
 		}

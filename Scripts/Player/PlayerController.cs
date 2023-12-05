@@ -44,10 +44,12 @@ public partial class PlayerController : Node
 		terrainEdit.playerCamera = playerCamera;
 	}
 
-	private void PlayAnim(string animName)
+	private void PlayAnim(string animName, float speed = 1f)
 	{
+		animationPlayer.SpeedScale = speed;
 		if (animationPlayer.CurrentAnimation != animName)
 			animationPlayer.Play(animName);
+
 	}
 
 	public override void _Process(double delta)
@@ -67,7 +69,7 @@ public partial class PlayerController : Node
 			if(playerState == PlayerState.Crouched)
 				PlayAnim("sneak_walking");
 			else
-				PlayAnim("running");
+				PlayAnim("running", .45f);
 		}
 		else
 		{

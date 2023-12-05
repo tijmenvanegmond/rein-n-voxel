@@ -2,7 +2,7 @@ using System;
 using Godot;
 using Godot.Collections;
 
-public partial class Chunk : StaticBody3D
+public partial class Chunk : Node3D
 {
     [Export]
     public bool isGenerated { get; private set; }
@@ -83,37 +83,37 @@ public partial class Chunk : StaticBody3D
         return false;
     }
 
-    public bool SetLocalVoxel(Vector3I loc, byte byteValue)
+    public bool SetLocalVoxel(Vector3I coord, byte byteValue)
     {
-        if (loc.X >= dataArrSize || loc.X < 0 ||
-            loc.Y >= dataArrSize || loc.Y < 0 ||
-            loc.Z >= dataArrSize || loc.Z < 0)
+        int x = coord.X;
+        int y = coord.Y;
+        int z = coord.Z;
+
+        if (x >= dataArrSize || x < 0 ||
+            y >= dataArrSize || y < 0 ||
+            z >= dataArrSize || z < 0)
         {  // out of bounds
             return false;
         }
 
-        dataArray[loc.X, loc.Y, loc.Z] = byteValue;
+        dataArray[x, y, z] = byteValue;
         PlanMeshUpdate();
 
         //update neighbouring chunks
-        var chunkKey = key;
-        int x = loc.X;
-        int y = loc.Y;
-        int z = loc.Z;
+        var neighborChunkKey = key;
+        if (x == CHUNK_SIZE - 1) neighborChunkKey.X++;
+        if (x == 0) neighborChunkKey.X--;
+        if (y == CHUNK_SIZE - 1) neighborChunkKey.Y++;
+        if (y == 0) neighborChunkKey.Y--;
+        if (z == CHUNK_SIZE - 1) neighborChunkKey.Z++;
+        if (z == 0) neighborChunkKey.Z--;
 
-        if (x == CHUNK_SIZE - 1) chunkKey.X++;
-        if (x == 0) chunkKey.X--;
-        if (y == CHUNK_SIZE - 1) chunkKey.Y++;
-        if (y == 0) chunkKey.Y--;
-        if (z == CHUNK_SIZE - 1) chunkKey.Z++;
-        if (z == 0) chunkKey.Z--;
-
-        if (chunkKey != key)
+        if (neighborChunkKey != key) //its actually a neighbour chunk
         {
-            Chunk neighborChunk = GetDirectNeighbour(chunkKey - key);
+            Chunk neighborChunk = GetDirectNeighbour(neighborChunkKey - key);
             if (neighborChunk == null)
             {
-                GD.Print($"Chunk[{key}] failed to find neighbour in direction {chunkKey - key}");
+                GD.Print($"Chunk[{key}] failed to find neighbour in direction {neighborChunkKey - key}");
             }
             neighborChunk.PlanMeshUpdate();
         }
@@ -162,14 +162,23 @@ public partial class Chunk : StaticBody3D
             }
         }
 
-        var mesh = MarchingCubes.CreateMesh(dataPlus1);
+        var newMesh = MarchingCubes.CreateMesh(dataPlus1);
 
-        surfaceMesh.Mesh = mesh;
+    
+        //TODO: check if correct child is removed
+        var oldCollider = surfaceMesh.GetChild(0);
+        if (oldCollider != null)
+        {
+            oldCollider.QueueFree();
+        }
+
+
+        surfaceMesh.Mesh = newMesh;
         surfaceMesh.CreateTrimeshCollision();
 
         doMeshUpdateInt = 0;
 
-        return mesh;
+        return newMesh;
     }
 
     private byte CheckFromNeighbourIfNeighbour(int x, int y, int z)

@@ -19,14 +19,13 @@ tonemap_mode = 2
 glow_enabled = true
 fog_enabled = true
 fog_light_color = Color(0.517647, 0.552941, 0.698039, 1)
-fog_density = 0.005
+fog_sun_scatter = 0.22
 volumetric_fog_density = 0.6529
 
 [node name="MainScene" type="Node3D" node_paths=PackedStringArray("terrainManager")]
 script = ExtResource("1_s3akr")
 playerScene = ExtResource("3_tst67")
 terrainManager = NodePath("Terrain")
-ChunkLoadRadius = 2
 ChunkLoadDepth = 1
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]

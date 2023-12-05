@@ -12,7 +12,7 @@ public partial class MovementController : CharacterBody3D
 	[Export]
 	public const float crouchedMovementSpeed = 2.5f;
 	[Export]
-	public const float jumpVelocity = 7f;
+	public const float jumpVelocity = 5f;
 	public Vector3 movementDirection { get; protected set; }
 	float currentMovementSpeed = normalMovementSpeed;
 
