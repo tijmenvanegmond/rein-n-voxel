@@ -44,6 +44,12 @@ public partial class PlayerController : Node
 		terrainEdit.playerCamera = playerCamera;
 	}
 
+	private void PlayAnim(string animName)
+	{
+		if (animationPlayer.CurrentAnimation != animName)
+			animationPlayer.Play(animName);
+	}
+
 	public override void _Process(double delta)
 	{
 		if (Input.IsActionJustPressed("movement_abilty") && action_MovementAbility != null)
@@ -57,14 +63,22 @@ public partial class PlayerController : Node
 		}
 
 		if (movementController.movementDirection != Vector3.Zero)
-		{
-			if (animationPlayer.CurrentAnimation != "running")
-				animationPlayer.Play("running");
+		{			
+			if(playerState == PlayerState.Crouched)
+				PlayAnim("sneak_walking");
+			else
+				PlayAnim("running");
 		}
 		else
 		{
-			if (animationPlayer.CurrentAnimation != "idle")
-				animationPlayer.Play("idle");
+			if(playerState == PlayerState.Crouched)
+				PlayAnim("sneak_idle");
+			else
+				PlayAnim("idle");
+		}
+
+		if(!movementController.IsOnFloor()){
+			PlayAnim("falling");
 		}
 
 		base._Process(delta);
@@ -78,6 +92,7 @@ public partial class PlayerController : Node
 			playerState = PlayerState.Crouched;
 			CapsuleShape3D shape = collider.Shape as CapsuleShape3D;
 			shape.Height = .9f;
+			collider.Position = new Vector3(0, .45f, 0);
 			movementController.Crouch();
 		}
 		else if (playerState == PlayerState.Crouched)
@@ -85,6 +100,7 @@ public partial class PlayerController : Node
 			playerState = PlayerState.Normal;
 			CapsuleShape3D shape = collider.Shape as CapsuleShape3D;
 			shape.Height = 1.8f;
+			collider.Position = new Vector3(0, .9f, 0);
 			movementController.UnCrouch();
 		}
 	}
