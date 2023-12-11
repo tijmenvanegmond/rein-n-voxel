@@ -1,9 +1,13 @@
-[gd_scene load_steps=8 format=3 uid="uid://b8n15q7e7bwwf"]
+[gd_scene load_steps=12 format=3 uid="uid://b8n15q7e7bwwf"]
 
 [ext_resource type="Script" path="res://Scripts/TerrainManager.cs" id="1_2mbxs"]
 [ext_resource type="Script" path="res://Scripts/GameController.cs" id="1_s3akr"]
 [ext_resource type="PackedScene" uid="uid://ccigbadtb8rgw" path="res://Scenes/chunk.res" id="2_ebcgn"]
+[ext_resource type="PackedScene" uid="uid://dt44uhpkt8b7w" path="res://Scenes/mob_small.tscn" id="2_ehip6"]
 [ext_resource type="PackedScene" uid="uid://i4x353k1mnxo" path="res://Scenes/player.tscn" id="3_tst67"]
+[ext_resource type="Script" path="res://Scripts/MobHandler.cs" id="6_md7am"]
+[ext_resource type="PackedScene" uid="uid://bgogmkvnu54ec" path="res://Scenes/mob_med.tscn" id="8_n37ld"]
+[ext_resource type="PackedScene" uid="uid://qeyaop88yj54" path="res://Scenes/mob_big.tscn" id="8_r0twd"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_4g16q"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -22,10 +26,12 @@ fog_light_color = Color(0.517647, 0.552941, 0.698039, 1)
 fog_sun_scatter = 0.22
 volumetric_fog_density = 0.6529
 
-[node name="MainScene" type="Node3D" node_paths=PackedStringArray("terrainManager")]
+[node name="MainScene" type="Node3D" node_paths=PackedStringArray("terrainManager", "mobHandeler")]
 script = ExtResource("1_s3akr")
 playerScene = ExtResource("3_tst67")
 terrainManager = NodePath("Terrain")
+mobHandeler = NodePath("MobHandler")
+ChunkLoadRadius = 4
 ChunkLoadDepth = 1
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -42,3 +48,9 @@ chunkScene = ExtResource("2_ebcgn")
 
 [node name="MainCamera" type="Camera3D" parent="."]
 current = true
+
+[node name="MobHandler" type="Node" parent="."]
+script = ExtResource("6_md7am")
+mobScene_small = ExtResource("2_ehip6")
+mobScene_medium = ExtResource("8_n37ld")
+mobScene_large = ExtResource("8_r0twd")

@@ -52,13 +52,19 @@ public partial class TerrainManager : Node
 		var CUBE_SIZE = (float)(CHUNK_SIZE / CHUNK_DIVISIONS);
 		var numOfSolid = 0;
 
+
 		for (int x = 0; x < dataArrSize; x++)
 		{
 			for (int z = 0; z < dataArrSize; z++)
 			{
+				float valueX = (x + startPos.X) / SCALE_MULTIPLIER;
+				float valueZ = (z + startPos.Z) / SCALE_MULTIPLIER;
+				float height = noise.GetNoise3D(valueX, 0, valueZ) * HEIGHT_MULTIPLIER;
+
+
 				for (int y = 0; y < dataArrSize; y++)
 				{
-					var byteValue = y + startPos.Y < 0 ? (byte)1 : (byte)0;
+					var byteValue = y + startPos.Y < height ? (byte)1 : (byte)0;
 					dataArray[x, y, z] = byteValue;
 
 					numOfSolid += byteValue;

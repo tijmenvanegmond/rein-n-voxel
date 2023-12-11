@@ -9,14 +9,14 @@ static public class MarchingCubes
 	{
 		target = tar;
 	}
-	static public Mesh CreateMesh(byte[,,] voxels)
+	static public Mesh CreateMesh(float[,,] voxels)
 	{
 		List<Vector3> verts = new List<Vector3>();
 		List<int> indices = new List<int>();	
 		List<int> uvs = new List<int>();	
 		List<Vector3> normals = new List<Vector3>();
 
-		var cube = new byte[8];
+		var cube = new float[8];
 
 		for (int x = 0; x < voxels.GetLength(0) - 1; x++)
 		{
@@ -32,6 +32,9 @@ static public class MarchingCubes
 			}
 		}
 
+		if(verts.Count == 0)
+			return null;
+
 		var surfaceArray = new Godot.Collections.Array();
         surfaceArray.Resize((int)Mesh.ArrayType.Max);
 
@@ -46,7 +49,7 @@ static public class MarchingCubes
 		return arrMesh;
 	}
 
-	static void FillCube(int x, int y, int z, byte[,,] voxels, byte[] cube)
+	static void FillCube(int x, int y, int z, float[,,] voxels, float[] cube)
 	{
 		for (int i = 0; i < 8; i++)
 			cube[i] = voxels[x + vertexOffset[i, 0], y + vertexOffset[i, 1], z + vertexOffset[i, 2]];
@@ -61,7 +64,7 @@ static public class MarchingCubes
 	}
 
 	//MarchCube performs the Marching Cubes algorithm on a single cube
-	static void MarchCube(Vector3 pos, byte[] cube, List<Vector3> verts, List<int> indices, List<Vector3> normals)
+	static void MarchCube(Vector3 pos, float[] cube, List<Vector3> verts, List<int> indices, List<Vector3> normals)
 	{
 		int i, j, vert, idx;
 		int flagIndex = 0;

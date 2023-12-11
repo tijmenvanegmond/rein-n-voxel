@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://cmgvroxtgtete"]
+[gd_scene load_steps=7 format=3 uid="uid://cmgvroxtgtete"]
 
 [ext_resource type="PackedScene" uid="uid://i4x353k1mnxo" path="res://Scenes/player.tscn" id="1_a1oo7"]
+[ext_resource type="PackedScene" uid="uid://dt44uhpkt8b7w" path="res://Scenes/mob_small.tscn" id="2_npoo3"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_xlwel"]
 
@@ -40,6 +41,10 @@ playerCamera = NodePath("../MainCamera")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 3.70711, 2.12132)
 shadow_enabled = true
+
+[node name="Mob" parent="." node_paths=PackedStringArray("target") instance=ExtResource("2_npoo3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.27302, 0, 0)
+target = NodePath("../Player")
 
 [node name="MainCamera" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.624098, 0.781346, 0, -0.781346, 0.624098, 1.27952, 7.60756, 7.49355)

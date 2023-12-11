@@ -1,6 +1,6 @@
 using Godot;
 
-public partial class PlayerController : Node
+public partial class PlayerController : Node3D
 {
 	public enum PlayerState
 	{

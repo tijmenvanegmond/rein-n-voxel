@@ -139,15 +139,11 @@ public partial class Chunk : Node3D
 
     public Mesh GenerateMesh()
     {
-        // if(numOfSolid == 0 || numOfSolid == dataArrSize*dataArrSize*dataArrSize)
-        // {
-        //     //Mesh all air or all solid
-        //     surfaceMesh.Mesh = null;
-        //     return null;
-        // }
+
         doMeshUpdateInt++;
 
-        byte[,,] dataPlus1 = new byte[CHUNK_SIZE + 1, CHUNK_SIZE + 1, CHUNK_SIZE + 1];
+        float[,,] dataPlus1 = new float[CHUNK_SIZE + 1, CHUNK_SIZE + 1, CHUNK_SIZE + 1];
+
 
         // get the edges of the chunks (positive) next to it
         for (int x = 0; x < CHUNK_SIZE + 1; x++)
@@ -157,28 +153,38 @@ public partial class Chunk : Node3D
                 for (int z = 0; z < CHUNK_SIZE + 1; z++)
                 {
                     byte voxelValue = CheckFromNeighbourIfNeighbour(x, y, z);
-                    dataPlus1[x, y, z] = voxelValue;
+                    dataPlus1[x, y, z] = ((float)voxelValue) * .5f;
                 }
             }
         }
 
         var newMesh = MarchingCubes.CreateMesh(dataPlus1);
 
-    
         //TODO: check if correct child is removed
-        var oldCollider = surfaceMesh.GetChild(0);
-        if (oldCollider != null)
+        if (surfaceMesh.GetChildCount() > 0)
         {
-            oldCollider.QueueFree();
+            var oldCollider = surfaceMesh.GetChild(0);
+            if (oldCollider != null)
+            {
+                oldCollider.QueueFree();
+            }
+        }
+
+        if (newMesh == null) // no mesh generated
+        {
+            surfaceMesh.Mesh = null;
+            doMeshUpdateInt = 0;
+            return null;
+        }
+        else
+        {
+            surfaceMesh.Mesh = newMesh;
+            surfaceMesh.CreateTrimeshCollision();
+            doMeshUpdateInt = 0;
+            return newMesh;
         }
 
 
-        surfaceMesh.Mesh = newMesh;
-        surfaceMesh.CreateTrimeshCollision();
-
-        doMeshUpdateInt = 0;
-
-        return newMesh;
     }
 
     private byte CheckFromNeighbourIfNeighbour(int x, int y, int z)

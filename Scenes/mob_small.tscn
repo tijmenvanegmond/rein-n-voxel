@@ -1,0 +1,58 @@
+[gd_scene load_steps=9 format=3 uid="uid://dt44uhpkt8b7w"]
+
+[ext_resource type="Script" path="res://Scripts/Mob.cs" id="1_26wvm"]
+[ext_resource type="PhysicsMaterial" uid="uid://bqpfyvd4vu8gt" path="res://Materials/mob_physics_material.tres" id="1_ir2qg"]
+[ext_resource type="Material" uid="uid://bg77cos2ugvtw" path="res://Materials/GlowingYellow.tres" id="1_uktxd"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_k4t0p"]
+radius = 6.0
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_fbmdb"]
+radius = 0.25
+
+[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_hjqqx"]
+albedo_color = Color(0.882353, 0.360784, 0, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_fw0a7"]
+material = SubResource("ORMMaterial3D_hjqqx")
+radius = 0.25
+height = 0.5
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_x8s02"]
+top_radius = 0.05
+bottom_radius = 0.05
+height = 0.1
+
+[node name="Mob" type="RigidBody3D" node_paths=PackedStringArray("visionArea")]
+mass = 0.1
+physics_material_override = ExtResource("1_ir2qg")
+script = ExtResource("1_26wvm")
+visionArea = NodePath("Area3D")
+power = 0.8
+
+[node name="Area3D" type="Area3D" parent="."]
+disable_mode = 2
+input_ray_pickable = false
+priority = 1
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("SphereShape3D_k4t0p")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_fbmdb")
+
+[node name="BodyPivot" type="Node3D" parent="."]
+
+[node name="Body" type="MeshInstance3D" parent="BodyPivot"]
+transform = Transform3D(1, 9.45874e-11, 2.32831e-10, -2.25555e-10, 1, -4.65661e-10, 0, 4.65661e-10, 1, 0, 0, 0)
+mesh = SubResource("SphereMesh_fw0a7")
+
+[node name="RightEye" type="MeshInstance3D" parent="BodyPivot/Body"]
+transform = Transform3D(-0.0171034, -0.999854, 0, 0.999854, -0.0171034, 0, 0, 0, 1, -0.215832, 5.78177e-12, 0.0747722)
+material_override = ExtResource("1_uktxd")
+mesh = SubResource("CylinderMesh_x8s02")
+
+[node name="LeftEye" type="MeshInstance3D" parent="BodyPivot/Body"]
+transform = Transform3D(-0.0171034, -0.999854, 0, 0.999854, -0.0171034, 0, 0, 0, 1, -0.20863, 1.12856e-10, -0.0987754)
+material_override = ExtResource("1_uktxd")
+mesh = SubResource("CylinderMesh_x8s02")
