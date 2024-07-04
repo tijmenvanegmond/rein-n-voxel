@@ -1,8 +1,13 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using Godot;
 
 public partial class Mob : RigidBody3D
 {
-
+	[Export]
+	public String name = "Mob";
 	[Export]
 	public Node3D target;
 	[Export]
@@ -12,18 +17,6 @@ public partial class Mob : RigidBody3D
 	[Export]
 	private float maxSpeed = 4f;
 	public TerrainManager terrainManager;
-
-	void OnBodyEntered(PhysicsBody3D body)
-	{
-		
-		
-	}
-
-		void OnBodyExited(PhysicsBody3D body)
-	{
-		
-		
-	}
 
 	public override void _Process(double delta)
 	{
@@ -35,34 +28,65 @@ public partial class Mob : RigidBody3D
 
 		var bodies = visionArea.GetOverlappingBodies();
 
-		float mobRepulsionDistanceSq = 4f;
+		float mobRepulsionDistanceSq = 8f;
+		float mobAttractionDistanceSq = 16f;
 
-		foreach (var body in bodies)
+
+		var directions = new List<Vector3>();
+
+		var bodies7 = bodies.OrderBy(x => x.Position.DistanceSquaredTo(Position)).Take(7);
+
+		foreach (var body in bodies7)
 		{
-			if(body == this)
+			if (body == this)
 				continue;
-			if (body is Mob)
+			else if (body is Mob)
 			{
-				var distSq = body.Position.DistanceSquaredTo(Position);
-				if(distSq < mobRepulsionDistanceSq)
+				if (this.LinearVelocity.Length() > maxSpeed)
 				{
-					Vector3 direction = ( Position -body.Position).Normalized();
-					if(this.LinearVelocity.Length() < maxSpeed)
-						ApplyCentralImpulse(direction * power * .5f * (float)delta);
+					break;
 				}
-				break;
-			}
 
-			if (body is MovementController)
+				var distSq = body.Position.DistanceSquaredTo(Position);
+				if (distSq < mobRepulsionDistanceSq)
+				{
+					//repulsion
+					directions.Add((Position - body.Position).Normalized()*.5f);
+				} 
+				else
+				{
+					//attraction
+					directions.Add((body.Position - Position).Normalized()*.2f);
+				}
+				
+					//flock
+					directions.Add((body as Mob).LinearVelocity.Normalized()*.5f);	
+			}
+			else if (body is PlayerController)
 			{
-				Vector3 direction = ( body.Position - Position).Normalized();
-				if(this.LinearVelocity.Length() < maxSpeed)				
-					ApplyCentralImpulse(direction* power * (float)delta);
+				//look at player
+				GD.Print("Mob: Player found");
+				this.LookAt(body.GlobalTransform.Origin, Vector3.Up);
 			}
 		}
 
-		
+		if(!directions.Any()){
+			return;
+		}
+
+		Vector3 direction = Vector3.Zero;//(directions.Aggregate((a, x) => { return a + x; }) / directions.Count()).Normalized();
+
+		foreach (var v in directions)
+		{
+			direction += v;
+		}
+
+		direction = direction / directions.Count();
+
+		ApplyCentralImpulse(direction * power * (float)delta);
+
+
 	}
 
-	
+
 }

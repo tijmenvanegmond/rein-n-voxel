@@ -24,11 +24,11 @@ bottom_radius = 0.05
 height = 0.1
 
 [node name="Mob" type="RigidBody3D" node_paths=PackedStringArray("visionArea")]
-mass = 0.1
+mass = 0.5
 physics_material_override = ExtResource("1_ir2qg")
 script = ExtResource("1_26wvm")
 visionArea = NodePath("Area3D")
-power = 0.8
+power = 2.0
 
 [node name="Area3D" type="Area3D" parent="."]
 disable_mode = 2
