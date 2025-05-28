@@ -32,6 +32,16 @@ public partial class PlayerController : Node3D
 
 	public override void _Ready()
 	{
+		// If movementController is not assigned, try to find it as a child node
+		if (movementController == null)
+		{
+			movementController = FindChild("MovementController") as MovementController;
+			if (movementController == null)
+			{
+				GD.PrintErr("PlayerController: MovementController not found! Please assign it in the inspector or ensure it exists as a child node.");
+			}
+		}
+		
 		SetChildParams();
 	}
 
@@ -64,23 +74,33 @@ public partial class PlayerController : Node3D
 			ToggleCrouch();
 		}
 
-		if (movementController.movementDirection != Vector3.Zero)
-		{			
-			if(playerState == PlayerState.Crouched)
-				PlayAnim("sneak_walking");
-			else
-				PlayAnim("running", .45f);
-		}
-		else
+		// Screenshot functionality
+		if (Input.IsActionJustPressed("take_screenshot"))
 		{
-			if(playerState == PlayerState.Crouched)
-				PlayAnim("sneak_idle");
-			else
-				PlayAnim("idle");
+			TakeScreenshot();
 		}
 
-		if(!movementController.IsOnFloor()){
-			PlayAnim("falling");
+		// Ensure movementController is initialized before accessing it
+		if (movementController != null)
+		{
+			if (movementController.movementDirection != Vector3.Zero)
+			{			
+				if(playerState == PlayerState.Crouched)
+					PlayAnim("sneak_walking");
+				else
+					PlayAnim("running", .45f);
+			}
+			else
+			{
+				if(playerState == PlayerState.Crouched)
+					PlayAnim("sneak_idle");
+				else
+					PlayAnim("idle");
+			}
+
+			if(!movementController.IsOnFloor()){
+				PlayAnim("falling");
+			}
 		}
 
 		base._Process(delta);
@@ -89,6 +109,12 @@ public partial class PlayerController : Node3D
 
 	public void ToggleCrouch()
 	{
+		// Ensure movementController is initialized before toggling crouch
+		if (movementController == null)
+		{
+			return;
+		}
+		
 		if (playerState == PlayerState.Normal)
 		{
 			playerState = PlayerState.Crouched;
@@ -104,6 +130,32 @@ public partial class PlayerController : Node3D
 			shape.Height = 1.8f;
 			collider.Position = new Vector3(0, .9f, 0);
 			movementController.UnCrouch();
+		}
+	}
+
+	private void TakeScreenshot()
+	{
+		// Find the screenshot manager in the scene
+		var screenshotManager = GetTree().GetFirstNodeInGroup("screenshot_manager");
+		if (screenshotManager == null)
+		{
+			screenshotManager = GetTree().CurrentScene.FindChild("ScreenshotManager");
+		}
+		
+		if (screenshotManager != null && screenshotManager.HasMethod("TakeScreenshot"))
+		{
+			screenshotManager.Call("TakeScreenshot");
+		}
+		else
+		{
+			GD.Print("Screenshot manager not found - taking manual screenshot");
+			// Fallback: take screenshot directly
+			var viewport = GetViewport();
+			var image = viewport.GetTexture().GetImage();
+			var timestamp = Time.GetDatetimeStringFromSystem().Replace(":", "-").Replace(" ", "_");
+			var filename = $"Screenshots/player_screenshot_{timestamp}.png";
+			image.SavePng(filename);
+			GD.Print($"Screenshot saved: {filename}");
 		}
 	}
 
