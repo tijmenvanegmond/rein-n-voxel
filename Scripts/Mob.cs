@@ -16,77 +16,169 @@ public partial class Mob : RigidBody3D
 	public float power { get; private set; } = 5f;
 	[Export]
 	private float maxSpeed = 4f;
+	[Export]
+	public float detectionRange = 15f;
+	[Export]
+	public float fleeDistance = 5f;
+	[Export]
+	public float investigateDistance = 8f;
+	[Export]
+	public float wanderRadius = 20f;
+	
+	public MobState currentState = MobState.Wandering;
+	public MobPersonality personality = MobPersonality.Neutral;
+	private Vector3 wanderTarget;
+	private float stateTimer = 0f;
+	private Node3D lastInterestPoint;
+	private RandomNumberGenerator rng = new RandomNumberGenerator();
+
 	public TerrainManager terrainManager;
 
-	public override void _Process(double delta)
+	// Behavior components
+	private MobMovement movementComponent;
+	private MobBehaviorStates behaviorStatesComponent;
+	private MobPersonalityBehavior personalityComponent;
+	private MobTerrainInteraction terrainComponent;
+	private MobAppearance appearanceComponent;
+
+	public override void _Ready()
 	{
-		if (target == null)
-		{
-			GD.Print("Mob: target is null");
-			return;
-		}
-
-		var bodies = visionArea.GetOverlappingBodies();
-
-		float mobRepulsionDistanceSq = 8f;
-		float mobAttractionDistanceSq = 16f;
-
-
-		var directions = new List<Vector3>();
-
-		var bodies7 = bodies.OrderBy(x => x.Position.DistanceSquaredTo(Position)).Take(7);
-
-		foreach (var body in bodies7)
-		{
-			if (body == this)
-				continue;
-			else if (body is Mob)
-			{
-				if (this.LinearVelocity.Length() > maxSpeed)
-				{
-					break;
-				}
-
-				var distSq = body.Position.DistanceSquaredTo(Position);
-				if (distSq < mobRepulsionDistanceSq)
-				{
-					//repulsion
-					directions.Add((Position - body.Position).Normalized()*.5f);
-				} 
-				else
-				{
-					//attraction
-					directions.Add((body.Position - Position).Normalized()*.2f);
-				}
-				
-					//flock
-					directions.Add((body as Mob).LinearVelocity.Normalized()*.5f);	
-			}
-			else if (body is PlayerController)
-			{
-				//look at player
-				GD.Print("Mob: Player found");
-				this.LookAt(body.GlobalTransform.Origin, Vector3.Up);
-			}
-		}
-
-		if(!directions.Any()){
-			return;
-		}
-
-		Vector3 direction = Vector3.Zero;//(directions.Aggregate((a, x) => { return a + x; }) / directions.Count()).Normalized();
-
-		foreach (var v in directions)
-		{
-			direction += v;
-		}
-
-		direction = direction / directions.Count();
-
-		ApplyCentralImpulse(direction * power * (float)delta);
-
-
+		rng.Randomize();
+		
+		// Initialize behavior components
+		movementComponent = new MobMovement(this);
+		behaviorStatesComponent = new MobBehaviorStates(this);
+		personalityComponent = new MobPersonalityBehavior(this);
+		terrainComponent = new MobTerrainInteraction(this);
+		appearanceComponent = new MobAppearance(this);
+		
+		SetRandomWanderTarget();
+		
+		// Ensure physics properties are set
+		GravityScale = 1.0f;
+		CanSleep = false;
+		
+		// Find terrain manager
+		terrainManager = terrainComponent.FindTerrainManager();
+		
+		// Set initial appearance based on personality
+		SetPersonalityAppearance();
 	}
 
+	public override void _PhysicsProcess(double delta)
+	{
+		stateTimer += (float)delta;
+		
+		if (target == null)
+		{
+			return;
+		}
 
+		UpdateState(delta);
+		ExecuteCurrentState(delta);
+		
+		// Apply terrain collision and ground detection
+		terrainComponent.HandleTerrainInteraction();
+		
+		// Update physics properties based on state
+		movementComponent.UpdatePhysicsProperties(currentState, personality);
+	}
+
+	private void UpdateState(double delta)
+	{
+		personalityComponent.UpdateStateWithPersonality(delta);
+	}
+
+	private void ExecuteCurrentState(double delta)
+	{
+		Vector3 desiredDirection = Vector3.Zero;
+
+		switch (currentState)
+		{
+			case MobState.Wandering:
+				desiredDirection = behaviorStatesComponent.HandleWandering();
+				break;
+			case MobState.Flocking:
+				desiredDirection = behaviorStatesComponent.HandleFlocking();
+				break;
+			case MobState.Fleeing:
+				desiredDirection = behaviorStatesComponent.HandleFleeing();
+				break;
+			case MobState.Investigating:
+				desiredDirection = behaviorStatesComponent.HandleInvestigating();
+				break;
+			case MobState.Idle:
+				desiredDirection = behaviorStatesComponent.HandleIdle();
+				break;
+		}
+
+		// Apply terrain-aware movement
+		if (desiredDirection.Length() > 0)
+		{
+			movementComponent.ApplyTerrainAwareMovement(desiredDirection, delta);
+		}
+	}
+
+	public void ChangeState(MobState newState)
+	{
+		currentState = newState;
+		stateTimer = 0f;
+		
+		// Update appearance based on new state
+		appearanceComponent.UpdateAppearanceBasedOnState(newState);
+		
+		// State entry logic
+		switch (newState)
+		{
+			case MobState.Wandering:
+				SetRandomWanderTarget();
+				break;
+		}
+	}
+
+	public void SetRandomWanderTarget()
+	{
+		wanderTarget = terrainComponent.GetSmartWanderTarget();
+	}
+
+	// Mob behavior tuning - can be adjusted per mob type
+	public void SetBehaviorParameters(MobType mobType)
+	{
+		personalityComponent.SetBehaviorParameters(mobType);
+		
+		// Apply visual appearance based on personality
+		CallDeferred(nameof(SetPersonalityAppearance));
+	}
+
+	// Group behavior coordination
+	public void NotifyNearbyMobs(string eventType, Vector3 eventPosition)
+	{
+		personalityComponent.NotifyNearbyMobs(eventType, eventPosition);
+	}
+
+	public void OnMobEvent(string eventType, Vector3 eventPosition, Mob sender)
+	{
+		personalityComponent.OnMobEvent(eventType, eventPosition, sender);
+	}
+
+	// Debug method for checking mob state
+	public string GetDebugInfo()
+	{
+		return $"State: {currentState}, Personality: {personality}, Speed: {LinearVelocity.Length():F1}, Target Distance: {(wanderTarget - Position).Length():F1}";
+	}
+
+	// Visual customization based on personality
+	public void SetPersonalityAppearance()
+	{
+		appearanceComponent.SetPersonalityAppearance();
+	}
+
+	// Public accessors for behavior components
+	public Vector3 GetWanderTarget() => wanderTarget;
+	public float GetStateTimer() => stateTimer;
+	public void ResetStateTimer() => stateTimer = 0f;
+	public void SetLastInterestPoint(Node3D point) => lastInterestPoint = point;
+	public float GetMaxSpeed() => maxSpeed;
+	public void SetMaxSpeed(float speed) => maxSpeed = speed;
+	public void SetPower(float newPower) => power = newPower;
 }

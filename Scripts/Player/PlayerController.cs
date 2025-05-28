@@ -32,6 +32,16 @@ public partial class PlayerController : Node3D
 
 	public override void _Ready()
 	{
+		// If movementController is not assigned, try to find it as a child node
+		if (movementController == null)
+		{
+			movementController = FindChild("MovementController") as MovementController;
+			if (movementController == null)
+			{
+				GD.PrintErr("PlayerController: MovementController not found! Please assign it in the inspector or ensure it exists as a child node.");
+			}
+		}
+		
 		SetChildParams();
 	}
 
@@ -64,23 +74,27 @@ public partial class PlayerController : Node3D
 			ToggleCrouch();
 		}
 
-		if (movementController.movementDirection != Vector3.Zero)
-		{			
-			if(playerState == PlayerState.Crouched)
-				PlayAnim("sneak_walking");
-			else
-				PlayAnim("running", .45f);
-		}
-		else
+		// Ensure movementController is initialized before accessing it
+		if (movementController != null)
 		{
-			if(playerState == PlayerState.Crouched)
-				PlayAnim("sneak_idle");
+			if (movementController.movementDirection != Vector3.Zero)
+			{			
+				if(playerState == PlayerState.Crouched)
+					PlayAnim("sneak_walking");
+				else
+					PlayAnim("running", .45f);
+			}
 			else
-				PlayAnim("idle");
-		}
+			{
+				if(playerState == PlayerState.Crouched)
+					PlayAnim("sneak_idle");
+				else
+					PlayAnim("idle");
+			}
 
-		if(!movementController.IsOnFloor()){
-			PlayAnim("falling");
+			if(!movementController.IsOnFloor()){
+				PlayAnim("falling");
+			}
 		}
 
 		base._Process(delta);
@@ -89,6 +103,12 @@ public partial class PlayerController : Node3D
 
 	public void ToggleCrouch()
 	{
+		// Ensure movementController is initialized before toggling crouch
+		if (movementController == null)
+		{
+			return;
+		}
+		
 		if (playerState == PlayerState.Normal)
 		{
 			playerState = PlayerState.Crouched;
