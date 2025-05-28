@@ -9,7 +9,9 @@ public partial class ScreenshotManager : Node
     [Export]
     public string screenshotPrefix = "screenshot_";
     
-    private bool screenshotRequested = false;    public override void _Ready()
+    private bool screenshotRequested = false;
+    
+    public override void _Ready()
     {
         // Add to screenshot_manager group for easy access
         AddToGroup("screenshot_manager");

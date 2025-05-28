@@ -90,9 +90,10 @@ public partial class MobHandler : Node
 		switch (mobType)
 		{
 			case MobType.SmallFriendly:
+				mobScene = mobScene_smallFriendly ?? mobScene_medium;
+				break;
 			case MobType.SmallSkittish:
-				// Use the same small scene for both personalities
-				mobScene = mobScene_smallFriendly ?? mobScene_smallSkittish ?? mobScene_medium;
+				mobScene = mobScene_smallSkittish ?? mobScene_medium;
 				break;
 			case MobType.Medium:
 				mobScene = mobScene_medium;
