@@ -56,4 +56,3 @@ mobScene_large = ExtResource("8_r0twd")
 
 [node name="ScreenshotManager" type="Node" parent="."]
 script = ExtResource("7_screenshot")
-screenshotDirectory = "Screenshots"
