@@ -2,6 +2,15 @@
 
 A dynamic voxel-based world simulation built with Godot 4 and C#, featuring intelligent mob behaviors, faction systems, and procedural terrain generation.
 
+## 📸 Screenshots
+
+![Game Screenshot](/Screenshots/screenshot_2025-05-28T16-42-05.png)
+
+*Main gameplay showing voxel terrain and intelligent mobs*
+
+![Mob Interactions](/Screenshots/screenshot_2025-05-28T16-45-44.png)
+*Different mob factions and their behaviors*
+
 ## 🎮 Features
 
 ### Intelligent Mob System
@@ -97,6 +106,22 @@ Scripts/
 3. Run the main scene to spawn in the voxel world
 4. Observe different mob behaviors and faction interactions
 5. Use terrain editing tools to modify the environment
+
+### 📸 Taking Screenshots
+
+The game includes built-in screenshot functionality:
+
+- **F12**: Take a screenshot (also works from ScreenshotManager)
+- **F11**: Take a screenshot from player input (alternative binding)
+
+Screenshots are automatically saved to the `Screenshots/` directory with timestamps.
+
+**Available Methods:**
+- **In-Game**: Press F12 or F11 while playing
+- **Manual**: Call `TakeScreenshot()` on the ScreenshotManager node
+- **Player Action**: The player controller has integrated screenshot functionality
+
+Screenshots are saved as PNG files with automatic timestamping for easy organization.
 
 ## 📝 Development Notes
 

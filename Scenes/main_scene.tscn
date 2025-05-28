@@ -3,9 +3,9 @@
 [ext_resource type="Script" path="res://Scripts/TerrainManager.cs" id="1_2mbxs"]
 [ext_resource type="Script" path="res://Scripts/GameController.cs" id="1_s3akr"]
 [ext_resource type="PackedScene" uid="uid://ccigbadtb8rgw" path="res://Scenes/chunk.res" id="2_ebcgn"]
-[ext_resource type="PackedScene" uid="uid://dt44uhpkt8b7w" path="res://Scenes/mob_small.tscn" id="2_ehip6"]
 [ext_resource type="PackedScene" uid="uid://i4x353k1mnxo" path="res://Scenes/player.tscn" id="3_tst67"]
 [ext_resource type="Script" path="res://Scripts/MobHandler.cs" id="6_md7am"]
+[ext_resource type="Script" path="res://Scripts/ScreenshotManager.cs" id="7_screenshot"]
 [ext_resource type="PackedScene" uid="uid://bgogmkvnu54ec" path="res://Scenes/mob_med.tscn" id="8_n37ld"]
 [ext_resource type="PackedScene" uid="uid://qeyaop88yj54" path="res://Scenes/mob_big.tscn" id="8_r0twd"]
 
@@ -51,6 +51,9 @@ current = true
 
 [node name="MobHandler" type="Node" parent="."]
 script = ExtResource("6_md7am")
-mobScene_small = ExtResource("2_ehip6")
 mobScene_medium = ExtResource("8_n37ld")
 mobScene_large = ExtResource("8_r0twd")
+
+[node name="ScreenshotManager" type="Node" parent="."]
+script = ExtResource("7_screenshot")
+screenshotDirectory = "Screenshots"
