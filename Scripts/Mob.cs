@@ -4,6 +4,14 @@ using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using Godot;
 
+public enum MobFaction
+{
+	Player,     // Allied with player
+	Neutral,    // Independent, no strong allegiances
+	Wild,       // Natural creatures, avoid player
+	Hostile     // Aggressive towards player (future use)
+}
+
 public partial class Mob : RigidBody3D
 {
 	[Export]
@@ -21,12 +29,10 @@ public partial class Mob : RigidBody3D
 	[Export]
 	public float fleeDistance = 5f;
 	[Export]
-	public float investigateDistance = 8f;
-	[Export]
-	public float wanderRadius = 20f;
-	
-	public MobState currentState = MobState.Wandering;
+	public float investigateDistance = 8f;	[Export]
+	public float wanderRadius = 20f;	public MobState currentState = MobState.Wandering;
 	public MobPersonality personality = MobPersonality.Neutral;
+	public MobFaction faction = MobFaction.Neutral;
 	private Vector3 wanderTarget;
 	private float stateTimer = 0f;
 	private Node3D lastInterestPoint;
@@ -171,9 +177,7 @@ public partial class Mob : RigidBody3D
 	public void SetPersonalityAppearance()
 	{
 		appearanceComponent.SetPersonalityAppearance();
-	}
-
-	// Public accessors for behavior components
+	}	// Public accessors for behavior components
 	public Vector3 GetWanderTarget() => wanderTarget;
 	public float GetStateTimer() => stateTimer;
 	public void ResetStateTimer() => stateTimer = 0f;
@@ -181,4 +185,35 @@ public partial class Mob : RigidBody3D
 	public float GetMaxSpeed() => maxSpeed;
 	public void SetMaxSpeed(float speed) => maxSpeed = speed;
 	public void SetPower(float newPower) => power = newPower;
+
+	// Faction management methods
+	public void SetFaction(MobFaction newFaction)
+	{
+		if (faction != newFaction)
+		{
+			faction = newFaction;
+			
+			// Update appearance to reflect new faction
+			CallDeferred(nameof(SetPersonalityAppearance));
+			
+			// Notify nearby mobs of faction change
+			NotifyNearbyMobs("faction_changed", Position);
+			
+			GD.Print($"Mob faction changed to: {newFaction}");
+		}
+	}
+
+	public bool IsAlliedWith(MobFaction otherFaction)
+	{
+		// Player and Neutral factions are generally allied
+		// Wild and Hostile factions are generally not allied with Player
+		return faction == otherFaction || 
+		       (faction == MobFaction.Player && otherFaction == MobFaction.Neutral) ||
+		       (faction == MobFaction.Neutral && otherFaction == MobFaction.Player);
+	}
+
+	public bool IsAlliedWith(Mob otherMob)
+	{
+		return IsAlliedWith(otherMob.faction);
+	}
 }

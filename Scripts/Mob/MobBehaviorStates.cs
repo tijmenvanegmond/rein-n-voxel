@@ -29,21 +29,26 @@ public partial class MobBehaviorStates : RefCounted
         // Only use horizontal movement for wandering
         var horizontalDirection = new Vector3(toTarget.X, 0, toTarget.Z).Normalized();
         return horizontalDirection;
-    }
-
-    public Vector3 HandleFlocking()
+    }    public Vector3 HandleFlocking()
     {
         var bodies = mob.visionArea.GetOverlappingBodies();
         var directions = new List<Vector3>();
         var mobRepulsionDistanceSq = 8f;
 
-        // Get nearby mobs, filtering by personality for skittish mobs
+        // Get nearby mobs, filtering by both personality and faction
         var nearbyMobs = bodies.OfType<Mob>().Where(m => m != mob);
+        
         if (mob.personality == MobPersonality.Skittish)
         {
-            // Skittish mobs prefer to flock with other skittish mobs
-            nearbyMobs = nearbyMobs.Where(m => m.personality == MobPersonality.Skittish);
+            // Skittish mobs prefer to flock with other skittish mobs of the same faction
+            nearbyMobs = nearbyMobs.Where(m => m.personality == MobPersonality.Skittish && m.faction == mob.faction);
         }
+        else
+        {
+            // Other personalities flock with same faction members
+            nearbyMobs = nearbyMobs.Where(m => m.faction == mob.faction);
+        }
+        
         nearbyMobs = nearbyMobs.Take(7);
 
         // Handle mob-to-mob flocking
@@ -74,16 +79,19 @@ public partial class MobBehaviorStates : RefCounted
             }
         }
 
-        // Handle player interaction based on personality
+        // Handle player interaction based on personality and faction
         var playerBody = bodies.OfType<PlayerController>().FirstOrDefault();
         if (playerBody != null)
         {
             var toPlayer = playerBody.Position - mob.Position;
             var playerDistance = toPlayer.Length();
             
-            if (mob.personality == MobPersonality.Friendly)
+            // Check if player and mob are allied (same faction)
+            var isPlayerAllied = mob.faction == MobFaction.Player;
+            
+            if (mob.personality == MobPersonality.Friendly && isPlayerAllied)
             {
-                // Friendly mobs are attracted to the player but maintain some distance
+                // Friendly allied mobs are attracted to the player but maintain some distance
                 if (playerDistance > 6f)
                 {
                     // Move toward player if far away
@@ -95,15 +103,15 @@ public partial class MobBehaviorStates : RefCounted
                     directions.Add(-toPlayer.Normalized() * 0.3f);
                 }
             }
-            else if (mob.personality == MobPersonality.Skittish)
+            else if (mob.personality == MobPersonality.Skittish || !isPlayerAllied)
             {
-                // Skittish mobs are repelled by the player
+                // Skittish mobs or non-allied mobs are repelled by the player
                 if (playerDistance < mob.fleeDistance)
                 {
                     directions.Add(-toPlayer.Normalized() * 1.2f);
                 }
             }
-            // Neutral mobs ignore the player in flocking mode
+            // Neutral allied mobs ignore the player in flocking mode
         }
 
         if (directions.Count == 0)
