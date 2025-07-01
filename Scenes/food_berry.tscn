@@ -1,0 +1,37 @@
+[gd_scene load_steps=6 format=3 uid="uid://bxyw5q5mnw8qd"]
+
+[ext_resource type="Script" path="res://Scripts/FoodItem.cs" id="1_0mnqw"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_1"]
+radius = 0.2
+height = 0.4
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1"]
+albedo_color = Color(0.8, 0.2, 0.3, 1)
+emission_enabled = true
+emission = Color(0.2, 0.05, 0.08, 1)
+roughness = 0.3
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_1"]
+radius = 0.2
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_2"]
+radius = 0.3
+
+[node name="FoodBerry" type="StaticBody3D"]
+script = ExtResource("1_0mnqw")
+foodType = 1
+nutritionValue = 25.0
+preferredBy = Array[int]([1, 2])
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_1")
+surface_material_override/0 = SubResource("StandardMaterial3D_1")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_1")
+
+[node name="Area3D" type="Area3D" parent="."]
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("SphereShape3D_2")

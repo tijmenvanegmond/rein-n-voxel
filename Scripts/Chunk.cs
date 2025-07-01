@@ -45,6 +45,17 @@ public partial class Chunk : Node3D
         GenerateMesh();
     }
 
+    public void ForceImmediateMeshGeneration()
+    {
+        // Force immediate mesh generation for collision
+        if (dataArray != null)
+        {
+            doMeshUpdateInt = 1;
+            GenerateMesh();
+            GD.Print($"Forced mesh generation completed for chunk {key}");
+        }
+    }
+
     private bool HasAllNeighboursCheck()
     {
         return neighbours.Count == 26;

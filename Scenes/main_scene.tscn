@@ -1,13 +1,21 @@
-[gd_scene load_steps=12 format=3 uid="uid://b8n15q7e7bwwf"]
+[gd_scene load_steps=20 format=3 uid="uid://b8n15q7e7bwwf"]
 
 [ext_resource type="Script" path="res://Scripts/TerrainManager.cs" id="1_2mbxs"]
 [ext_resource type="Script" path="res://Scripts/GameController.cs" id="1_s3akr"]
 [ext_resource type="PackedScene" uid="uid://ccigbadtb8rgw" path="res://Scenes/chunk.res" id="2_ebcgn"]
 [ext_resource type="PackedScene" uid="uid://i4x353k1mnxo" path="res://Scenes/player.tscn" id="3_tst67"]
 [ext_resource type="Script" path="res://Scripts/MobHandler.cs" id="6_md7am"]
+[ext_resource type="Script" path="res://Scripts/BiomeManager.cs" id="7_biomemanager"]
+[ext_resource type="Script" path="res://Scripts/FoodSpawner.cs" id="7_foodspawner"]
+[ext_resource type="Script" path="res://Scripts/GrassSpawner.cs" id="7_grassspawner"]
 [ext_resource type="Script" path="res://Scripts/ScreenshotManager.cs" id="7_screenshot"]
+[ext_resource type="Script" path="res://Scripts/TerrainAwareFoodSpawner.cs" id="7_terrainfoodspawner"]
+[ext_resource type="PackedScene" uid="uid://bjhw2q7vnyakt" path="res://Scenes/food_grass.tscn" id="8_food_grass"]
 [ext_resource type="PackedScene" uid="uid://bgogmkvnu54ec" path="res://Scenes/mob_med.tscn" id="8_n37ld"]
+[ext_resource type="PackedScene" uid="uid://bfg8h8k3l2m1n" path="res://Scenes/mob_predator.tscn" id="8_predator"]
 [ext_resource type="PackedScene" uid="uid://qeyaop88yj54" path="res://Scenes/mob_big.tscn" id="8_r0twd"]
+[ext_resource type="PackedScene" uid="uid://bxyw5q5mnw8qd" path="res://Scenes/food_berry.tscn" id="9_food_berry"]
+[ext_resource type="PackedScene" uid="uid://ctwyaq8vnm5rt" path="res://Scenes/food_meat.tscn" id="10_food_meat"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_4g16q"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -26,11 +34,15 @@ fog_light_color = Color(0.517647, 0.552941, 0.698039, 1)
 fog_sun_scatter = 0.22
 volumetric_fog_density = 0.6529
 
-[node name="MainScene" type="Node3D" node_paths=PackedStringArray("terrainManager", "mobHandeler")]
+[node name="MainScene" type="Node3D" node_paths=PackedStringArray("terrainManager", "mobHandeler", "foodSpawner", "terrainAwareFoodSpawner", "grassSpawner", "biomeManager")]
 script = ExtResource("1_s3akr")
 playerScene = ExtResource("3_tst67")
 terrainManager = NodePath("Terrain")
 mobHandeler = NodePath("MobHandler")
+foodSpawner = NodePath("FoodSpawner")
+terrainAwareFoodSpawner = NodePath("TerrainAwareFoodSpawner")
+grassSpawner = NodePath("GrassSpawner")
+biomeManager = NodePath("BiomeManager")
 ChunkLoadRadius = 4
 ChunkLoadDepth = 1
 
@@ -53,6 +65,25 @@ current = true
 script = ExtResource("6_md7am")
 mobScene_medium = ExtResource("8_n37ld")
 mobScene_large = ExtResource("8_r0twd")
+mobScene_predator = ExtResource("8_predator")
+
+[node name="FoodSpawner" type="Node" parent="."]
+script = ExtResource("7_foodspawner")
+grassFoodScene = ExtResource("8_food_grass")
+berryFoodScene = ExtResource("9_food_berry")
+
+[node name="BiomeManager" type="Node" parent="."]
+script = ExtResource("7_biomemanager")
+
+[node name="TerrainAwareFoodSpawner" type="Node" parent="."]
+script = ExtResource("7_terrainfoodspawner")
+grassFoodScene = ExtResource("8_food_grass")
+berryFoodScene = ExtResource("9_food_berry")
+meatFoodScene = ExtResource("10_food_meat")
+
+[node name="GrassSpawner" type="Node" parent="."]
+script = ExtResource("7_grassspawner")
+grassFoodScene = ExtResource("8_food_grass")
 
 [node name="ScreenshotManager" type="Node" parent="."]
 script = ExtResource("7_screenshot")

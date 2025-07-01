@@ -1,5 +1,5 @@
 {
-    "version": "0.2.0",
+    "version": "0.2.1",
     "configurations": [
         {
             "name": ".NET Core Launch (console)",
@@ -7,10 +7,16 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "C:/Users/tym_t/Downloads/Godot_v4.1.1-stable_mono_win64/Godot_v4.1.1-stable_mono_win64.exe",
-            "args": [],
+            "args": [
+                "--path",
+                "${workspaceFolder}"
+            ],
             "cwd": "${workspaceFolder}",
             "console": "internalConsole",
-            "stopAtEntry": false
+            "stopAtEntry": false,
+            "env": {
+                "GODOT_MONO_DEBUGGER_AGENT": "--debugger-agent=transport=dt_socket,server=y,address=127.0.0.1:23685,suspend=y,loglevel=3"
+            }
         },
         {
             "name": ".NET Core Attach",

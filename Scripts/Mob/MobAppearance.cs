@@ -126,7 +126,22 @@ public partial class MobAppearance : RefCounted
     public void UpdateAppearanceBasedOnState(MobState state)
     {
         var meshInstance = FindMeshInstance();
-        if (meshInstance?.MaterialOverride is StandardMaterial3D material)
+        if (meshInstance == null) return;
+
+        if (state == MobState.Dead)
+        {
+            var deadMaterial = new StandardMaterial3D();
+            deadMaterial.AlbedoColor = new Color(0.5f, 0.5f, 0.5f); // Grey
+            deadMaterial.MetallicSpecular = 0.1f;
+            deadMaterial.Roughness = 0.8f;
+            deadMaterial.EmissionEnabled = false;
+            meshInstance.MaterialOverride = deadMaterial;
+            GD.Print($"Mob {mob.Name} died, setting material to grey.");
+            return; // Early exit after setting dead appearance
+        }
+
+        // If not dead, proceed with other state-based appearance changes
+        if (meshInstance.MaterialOverride is StandardMaterial3D material)
         {
             // Adjust emission intensity based on state
             switch (state)
@@ -138,12 +153,24 @@ public partial class MobAppearance : RefCounted
                 case MobState.Investigating:
                     // Slightly brighter when curious
                     material.Emission = material.Emission * 1.2f;
-                    break;                default:
+                    break;
+                default:
                     // Reset to normal emission - recreate material to ensure base values
-                    material = CreatePersonalityMaterial(mob.personality, mob.faction);
-                    meshInstance.MaterialOverride = material;
+                    // This ensures that if a mob was fleeing/investigating and then goes to idle/wandering,
+                    // its appearance resets correctly without being stuck in a modified emission state.
+                    // We don't need to check mob.currentState != MobState.Dead here because
+                    // the Dead state is handled exclusively above.
+                    var newMaterial = CreatePersonalityMaterial(mob.personality, mob.faction);
+                    meshInstance.MaterialOverride = newMaterial;
                     break;
             }
+        }
+        else
+        {
+            // If material is null or not StandardMaterial3D, and not dead, set default personality material
+            // This can happen if the material was cleared or changed to something unexpected.
+            var newMaterial = CreatePersonalityMaterial(mob.personality, mob.faction);
+            meshInstance.MaterialOverride = newMaterial;
         }
     }
 }

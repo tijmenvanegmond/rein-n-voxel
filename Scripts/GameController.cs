@@ -10,6 +10,18 @@ public partial class GameController : Node
 	[Export]
 	public MobHandler mobHandeler { get; set; }
 	[Export]
+	public FoodSpawner foodSpawner { get; set; }
+	[Export]
+	public TerrainAwareFoodSpawner terrainAwareFoodSpawner { get; set; }
+	[Export]
+	public GrassSpawner grassSpawner { get; set; }
+	[Export]
+	public BiomeManager biomeManager { get; set; }
+	[Export]
+	public bool useTerrainAwareFoodSpawning { get; set; } = true;
+	[Export]
+	public bool enableGrassGrowth { get; set; } = true;
+	[Export]
 	public int ChunkLoadRadius = 10;
 
 	[Export]
@@ -36,6 +48,12 @@ public partial class GameController : Node
 		if (mobHandeler == null)
 		{
 			GD.PrintErr("GameController: MobHandler not assigned!");
+			return;
+		}
+		
+		if (foodSpawner == null)
+		{
+			GD.PrintErr("GameController: FoodSpawner not assigned!");
 			return;
 		}
 		
@@ -77,6 +95,30 @@ public partial class GameController : Node
 		GD.Print($"GameController: Spawning {numberOfMobs} mobs...");
 		mobHandeler.SpawnRandomMobs(numberOfMobs, Vector3.Zero, Player.movementController);
 		mobsSpawned = true;
+		
+		GD.Print("GameController: Initializing food spawning system...");
+		
+		if (useTerrainAwareFoodSpawning && terrainAwareFoodSpawner != null)
+		{
+			GD.Print("GameController: Using terrain-aware food spawning system");
+			terrainAwareFoodSpawner.InitializeFoodSpawning(Player.movementController, terrainManager, biomeManager);
+		}
+		else if (foodSpawner != null)
+		{
+			GD.Print("GameController: Using standard food spawning system");
+			foodSpawner.InitializeFoodSpawning(Player.movementController, terrainManager);
+		}
+		else
+		{
+			GD.PrintErr("GameController: No food spawning system available!");
+		}
+		
+		// Initialize grass spawning and growth system
+		if (enableGrassGrowth && grassSpawner != null)
+		{
+			GD.Print("GameController: Initializing grass growth system");
+			grassSpawner.InitializeGrassSpawning();
+		}
 	}
 
 

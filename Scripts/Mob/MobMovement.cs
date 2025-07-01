@@ -147,9 +147,7 @@ public partial class MobMovement : RefCounted
         {
             mob.ApplyCentralImpulse(Vector3.Up * power * 2.0f);
         }
-    }
-
-    public void UpdatePhysicsProperties(MobState currentState, MobPersonality personality)
+    }    public void UpdatePhysicsProperties(MobState currentState, MobPersonality personality)
     {
         // Adjust physics based on mob state and personality
         switch (currentState)
@@ -160,6 +158,14 @@ public partial class MobMovement : RefCounted
                 if (mob.LinearVelocity.Length() > maxSpeed * fleeMultiplier)
                 {
                     mob.LinearVelocity = mob.LinearVelocity.Normalized() * maxSpeed * fleeMultiplier;
+                }
+                break;
+            case MobState.Chasing:
+                // Predators move faster when chasing prey
+                var chaseMultiplier = personality == MobPersonality.Aggressive ? 1.6f : 1.3f;
+                if (mob.LinearVelocity.Length() > maxSpeed * chaseMultiplier)
+                {
+                    mob.LinearVelocity = mob.LinearVelocity.Normalized() * maxSpeed * chaseMultiplier;
                 }
                 break;
             case MobState.Investigating:

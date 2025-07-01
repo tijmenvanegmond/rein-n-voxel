@@ -1,0 +1,56 @@
+[gd_scene load_steps=9 format=3 uid="uid://bfg8h8k3l2m1n"]
+
+[ext_resource type="Script" path="res://Scripts/Mob.cs" id="1_predator"]
+[ext_resource type="PhysicsMaterial" uid="uid://bqpfyvd4vu8gt" path="res://Materials/mob_physics_material.tres" id="2_predator"]
+[ext_resource type="Material" uid="uid://bg77cos2ugvtw" path="res://Materials/GlowingYellow.tres" id="3_predator"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_predator_vision"]
+radius = 8.0
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_predator_body"]
+radius = 1.5
+
+[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_predator"]
+albedo_color = Color(0.1, 0.1, 0.1, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_predator"]
+radius = 1.5
+height = 3.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_predator_eye"]
+top_radius = 0.08
+bottom_radius = 0.08
+height = 0.15
+
+[node name="Mob" type="RigidBody3D" node_paths=PackedStringArray("visionArea")]
+physics_material_override = ExtResource("2_predator")
+script = ExtResource("1_predator")
+visionArea = NodePath("Area3D")
+power = 10.0
+maxSpeed = 5.0
+
+[node name="Area3D" type="Area3D" parent="."]
+disable_mode = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("SphereShape3D_predator_vision")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_predator_body")
+
+[node name="BodyPivot" type="Node3D" parent="."]
+
+[node name="Body" type="MeshInstance3D" parent="BodyPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+material_override = SubResource("ORMMaterial3D_predator")
+mesh = SubResource("SphereMesh_predator")
+
+[node name="RightEye" type="MeshInstance3D" parent="BodyPivot/Body"]
+transform = Transform3D(-0.0171034, -0.999854, 0, 0.999854, -0.0171034, 0, 0, 0, 1, -1.2, 0, 0.1)
+material_override = ExtResource("3_predator")
+mesh = SubResource("CylinderMesh_predator_eye")
+
+[node name="LeftEye" type="MeshInstance3D" parent="BodyPivot/Body"]
+transform = Transform3D(-0.0171034, -0.999854, 0, 0.999854, -0.0171034, 0, 0, 0, 1, -1.2, 0, -0.1)
+material_override = ExtResource("3_predator")
+mesh = SubResource("CylinderMesh_predator_eye")

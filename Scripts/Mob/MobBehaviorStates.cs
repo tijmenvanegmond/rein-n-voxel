@@ -192,4 +192,84 @@ public partial class MobBehaviorStates : RefCounted
     {
         return Vector3.Zero; // No movement when idle
     }
+    
+    public Vector3 HandleSeeking()
+    {
+        // Handle food seeking behavior
+        if (mob.foodComponent.currentFoodTarget != null)
+        {
+            var toFood = mob.foodComponent.currentFoodTarget.Position - mob.Position;
+            var distance = toFood.Length();
+            
+            // If close enough to food, transition to eating
+            if (distance < 1.5f)
+            {
+                mob.foodComponent.StartEating(mob.foodComponent.currentFoodTarget);
+                mob.ChangeState(MobState.Eating);
+                return Vector3.Zero;
+            }
+            
+            // Move toward food
+            return new Vector3(toFood.X, 0, toFood.Z).Normalized();
+        }
+        else
+        {
+            // No food target, look for nearby food
+            var nearbyFood = FindNearbyFood();
+            if (nearbyFood != null)
+            {
+                mob.foodComponent.SetFoodTarget(nearbyFood);
+                var toFood = nearbyFood.Position - mob.Position;
+                return new Vector3(toFood.X, 0, toFood.Z).Normalized();
+            }
+            else
+            {
+                // No food found, return to wandering
+                mob.ChangeState(MobState.Wandering);
+                return Vector3.Zero;
+            }
+        }
+    }
+    
+    private FoodItem FindNearbyFood()
+    {
+        // Look for food items in vision area
+        var bodies = mob.visionArea.GetOverlappingBodies();
+        var nearbyFoodItems = bodies.OfType<FoodItem>()
+            .Where(food => !food.isConsumed)
+            .Where(food => mob.foodComponent.CanEat(food.foodType))
+            .OrderBy(food => food.Position.DistanceTo(mob.Position))
+            .ToList();
+            
+        return nearbyFoodItems.FirstOrDefault();
+    }
+
+    public Vector3 HandleChasing()
+    {
+        // Predator chasing behavior - pursue prey aggressively
+        if (mob.combatComponent.currentTarget != null)
+        {
+            var targetMob = mob.combatComponent.currentTarget as Mob;
+            if (targetMob != null && !targetMob.isDead)
+            {
+                var toPrey = targetMob.Position - mob.Position;
+                var distance = toPrey.Length();
+                
+                // If close enough to attack, switch to combat
+                if (distance <= mob.combatComponent.attackRange * 1.2f)
+                {
+                    mob.ChangeState(MobState.Combat);
+                    return Vector3.Zero;
+                }
+                
+                // Chase the prey aggressively
+                var horizontalDirection = new Vector3(toPrey.X, 0, toPrey.Z).Normalized();
+                return horizontalDirection;
+            }
+        }
+        
+        // No valid target, return to wandering
+        mob.ChangeState(MobState.Wandering);
+        return Vector3.Zero;
+    }
 }
