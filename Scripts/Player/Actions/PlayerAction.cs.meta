@@ -1,0 +1,10 @@
+[remap]
+
+importer="csharp"
+type="CSharpScript"
+uid="uid://21a14d69d6d601854832a81f0cf754f6"
+
+[deps]
+
+source_file="res://Scripts/Player/Actions/PlayerAction.cs"
+dest_files=[]

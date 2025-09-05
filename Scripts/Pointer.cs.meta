@@ -1,0 +1,10 @@
+[remap]
+
+importer="csharp"
+type="CSharpScript"
+uid="uid://f004c05c78f6773d8cbef04b09ee4f56"
+
+[deps]
+
+source_file="res://Scripts/Pointer.cs"
+dest_files=[]

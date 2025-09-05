@@ -1,0 +1,10 @@
+[remap]
+
+importer="csharp"
+type="CSharpScript"
+uid="uid://7d2b91eb174302692437b10b68749cc5"
+
+[deps]
+
+source_file="res://Scripts/Mob/MobPersonality.cs"
+dest_files=[]

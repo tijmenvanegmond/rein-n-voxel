@@ -1,0 +1,10 @@
+[remap]
+
+importer="csharp"
+type="CSharpScript"
+uid="uid://9b5bc2a5b1884776a5a42e184b0a29b7"
+
+[deps]
+
+source_file="res://Scripts/Chunk.cs"
+dest_files=[]

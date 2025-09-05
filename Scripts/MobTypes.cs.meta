@@ -1,0 +1,10 @@
+[remap]
+
+importer="csharp"
+type="CSharpScript"
+uid="uid://63c55d8c7c92281e62d0d0b84e7246e7"
+
+[deps]
+
+source_file="res://Scripts/MobTypes.cs"
+dest_files=[]

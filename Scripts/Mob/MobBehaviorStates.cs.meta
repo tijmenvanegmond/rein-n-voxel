@@ -1,0 +1,10 @@
+[remap]
+
+importer="csharp"
+type="CSharpScript"
+uid="uid://34a34a3370d45151265e78d0a70e1aa8"
+
+[deps]
+
+source_file="res://Scripts/Mob/MobBehaviorStates.cs"
+dest_files=[]

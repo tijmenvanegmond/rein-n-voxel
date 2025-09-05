@@ -1,0 +1,10 @@
+[remap]
+
+importer="csharp"
+type="CSharpScript"
+uid="uid://c63e7a33d51b267654e44ee0de7c1290"
+
+[deps]
+
+source_file="res://Scripts/Mob/MobAppearance.cs"
+dest_files=[]

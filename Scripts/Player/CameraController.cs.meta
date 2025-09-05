@@ -1,0 +1,10 @@
+[remap]
+
+importer="csharp"
+type="CSharpScript"
+uid="uid://3a843db745abe576a64fb8e41758a965"
+
+[deps]
+
+source_file="res://Scripts/Player/CameraController.cs"
+dest_files=[]

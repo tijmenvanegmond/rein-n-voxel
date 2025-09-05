@@ -8,13 +8,13 @@ public partial class MovementController : CharacterBody3D
 	[Export]
 	public Node3D BodyPivot;
 	[Export]
-	public const float normalMovementSpeed = 5.0f;
+	public float normalMovementSpeed = 5.0f;
 	[Export]
-	public const float crouchedMovementSpeed = 2.5f;
+	public float crouchedMovementSpeed = 2.5f;
 	[Export]
-	public const float jumpVelocity = 5f;
+	public float jumpVelocity = 5f;
 	public Vector3 movementDirection { get; protected set; }
-	float currentMovementSpeed = normalMovementSpeed;
+	float currentMovementSpeed = 5.0f;
 
 	// Get the gravity from the project settings to be synced with RigidBody nodes.
 	public float gravity = ProjectSettings.GetSetting("physics/3d/default_gravity").AsSingle();

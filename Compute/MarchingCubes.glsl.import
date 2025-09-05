@@ -3,12 +3,11 @@
 importer="glsl"
 type="RDShaderFile"
 uid="uid://dvkavjok5sixg"
-path="res://.godot/imported/MarchingCubes.glsl-06baa988d841e06c946c11bbfa1b5d61.res"
+valid=false
 
 [deps]
 
 source_file="res://Compute/MarchingCubes.glsl"
-dest_files=["res://.godot/imported/MarchingCubes.glsl-06baa988d841e06c946c11bbfa1b5d61.res"]
 
 [params]
 

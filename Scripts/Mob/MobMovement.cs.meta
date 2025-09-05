@@ -1,0 +1,10 @@
+[remap]
+
+importer="csharp"
+type="CSharpScript"
+uid="uid://22a0fd3dca274d575a60ba9b909c1f50"
+
+[deps]
+
+source_file="res://Scripts/Mob/MobMovement.cs"
+dest_files=[]

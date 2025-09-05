@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://d1itx33v0mh1b"]
+
+[ext_resource type="Script" uid="uid://ck8khuduoyw3" path="res://Scripts/Chunk.cs" id="1_8h5xj"]
+[ext_resource type="Material" uid="uid://bj106mgox7g71" path="res://Materials/TriPlaner.tres" id="2_material"]
+
+[node name="Chunk" type="Node3D" node_paths=PackedStringArray("surfaceMesh")]
+script = ExtResource("1_8h5xj")
+surfaceMesh = NodePath("MeshInstance3D")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+material_override = ExtResource("2_material")

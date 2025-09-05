@@ -1,0 +1,10 @@
+[remap]
+
+importer="csharp"
+type="CSharpScript"
+uid="uid://804f0b458c1383a2f1a5cf492300b62c"
+
+[deps]
+
+source_file="res://Scripts/Player/PlayerController.cs"
+dest_files=[]

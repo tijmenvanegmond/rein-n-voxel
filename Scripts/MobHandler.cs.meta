@@ -1,0 +1,10 @@
+[remap]
+
+importer="csharp"
+type="CSharpScript"
+uid="uid://62874bbc4b84906b611c8c77e0dd0f24"
+
+[deps]
+
+source_file="res://Scripts/MobHandler.cs"
+dest_files=[]

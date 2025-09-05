@@ -1,0 +1,10 @@
+[remap]
+
+importer="csharp"
+type="CSharpScript"
+uid="uid://2add9345786c17a3250e78b7012b6869"
+
+[deps]
+
+source_file="res://Scripts/TerrainManager.cs"
+dest_files=[]

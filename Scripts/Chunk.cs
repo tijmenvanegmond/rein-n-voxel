@@ -179,6 +179,8 @@ public partial class Chunk : Node3D
         else
         {
             surfaceMesh.Mesh = newMesh;
+            
+            
             surfaceMesh.CreateTrimeshCollision();
             doMeshUpdateInt = 0;
             return newMesh;

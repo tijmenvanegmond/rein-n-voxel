@@ -1,0 +1,10 @@
+[remap]
+
+importer="csharp"
+type="CSharpScript"
+uid="uid://15113ff84af1daa573319e55a38b0640"
+
+[deps]
+
+source_file="res://Scripts/Mob/MobTerrainInteraction.cs"
+dest_files=[]

@@ -1,0 +1,10 @@
+[remap]
+
+importer="csharp"
+type="CSharpScript"
+uid="uid://5889f8bd4900288ace93d5ba43c7afde"
+
+[deps]
+
+source_file="res://Scripts/Player/Actions/PlacePillar.cs"
+dest_files=[]

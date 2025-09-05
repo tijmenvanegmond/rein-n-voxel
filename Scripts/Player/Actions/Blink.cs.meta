@@ -1,0 +1,10 @@
+[remap]
+
+importer="csharp"
+type="CSharpScript"
+uid="uid://3050fe2a7df595137fb80ccd175f01f5"
+
+[deps]
+
+source_file="res://Scripts/Player/Actions/Blink.cs"
+dest_files=[]

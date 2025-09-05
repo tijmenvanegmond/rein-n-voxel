@@ -1,0 +1,10 @@
+[remap]
+
+importer="csharp"
+type="CSharpScript"
+uid="uid://9533a6875e7ddd3c526eb47d65644ea6"
+
+[deps]
+
+source_file="res://Scripts/ScreenshotManager.cs"
+dest_files=[]

@@ -1,0 +1,10 @@
+[remap]
+
+importer="csharp"
+type="CSharpScript"
+uid="uid://9d2438b6fc2be0c9b2615820cda93764"
+
+[deps]
+
+source_file="res://Scripts/Player/TerrainEdit.cs"
+dest_files=[]

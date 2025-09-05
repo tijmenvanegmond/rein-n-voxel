@@ -6,7 +6,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "C:/Users/tym_t/Downloads/Godot_v4.1.1-stable_mono_win64/Godot_v4.1.1-stable_mono_win64.exe",
+            "program": "/Applications/Godot_mono.app/Contents/MacOS/Godot",
             "args": [],
             "cwd": "${workspaceFolder}",
             "console": "internalConsole",

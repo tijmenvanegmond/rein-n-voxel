@@ -148,7 +148,21 @@ public partial class TerrainManager : Node
 		if (GetChunkByKey(key) != null)
 			return;
 
-		Chunk newChunk = chunkScene.Instantiate<Chunk>();
+		if (chunkScene == null)
+		{
+			GD.PrintErr("TerrainManager: chunkScene is null! Please assign it in the inspector.");
+			return;
+		}
+
+		Node instantiated = chunkScene.Instantiate();
+		GD.Print($"TerrainManager: Instantiated node type: {instantiated.GetType()}, trying to cast to Chunk");
+		
+		if (!(instantiated is Chunk newChunk))
+		{
+			GD.PrintErr($"TerrainManager: Instantiated node is not a Chunk! It's a {instantiated.GetType()}");
+			instantiated.QueueFree();
+			return;
+		}
 		AddChild(newChunk);
 		newChunk.Name = $"Chunk{key}";
 		chunkDict.Add(key, newChunk);
@@ -187,5 +201,8 @@ public partial class TerrainManager : Node
 		}
 
 		newChunk.SetDirectNeighbours(neighbours);
+		
+		// Trigger mesh generation for the new chunk
+		newChunk.PlanMeshUpdate();
 	}
 }

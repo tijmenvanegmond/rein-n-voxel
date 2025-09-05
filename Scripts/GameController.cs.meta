@@ -1,0 +1,10 @@
+[remap]
+
+importer="csharp"
+type="CSharpScript"
+uid="uid://bd0c11ca4b4a0b9b2ca2df7560d4b2f6"
+
+[deps]
+
+source_file="res://Scripts/GameController.cs"
+dest_files=[]

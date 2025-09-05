@@ -1,0 +1,10 @@
+[remap]
+
+importer="csharp"
+type="CSharpScript"
+uid="uid://cef68adfe0d7b57b703426ec6720b7a3"
+
+[deps]
+
+source_file="res://Scripts/CustomSignals.cs"
+dest_files=[]
